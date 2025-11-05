@@ -3,6 +3,8 @@ import hashlib
 from datetime import datetime
 
 # Database initialization
+
+
 def init_db():
     conn = sqlite3.connect('users.db')
     cursor = conn.cursor()
