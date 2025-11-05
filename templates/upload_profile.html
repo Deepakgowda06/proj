@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block title %}Complete Profile - BreastCare AI{% endblock %}
+
+{% block content %}
+<div class="container profile-form-container">
+    <div class="profile-header">
+        <h1>Complete Your Profile</h1>
+        <p class="profile-subtitle">Please provide your personal and medical information</p>
+    </div>
+
+    <form method="POST" action="{{ url_for('upload_profile') }}" class="profile-form">
+        <div class="form-section">
+            <h2>Personal Information</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="full_name">Full Name *</label>
+                    <input type="text" id="full_name" name="full_name" value="{{ profile.full_name if profile }}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="age">Age *</label>
+                    <input type="number" id="age" name="age" min="1" max="120" value="{{ profile.age if profile }}" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="date_of_birth">Date of Birth *</label>
+                    <input type="date" id="date_of_birth" name="date_of_birth" value="{{ profile.date_of_birth if profile }}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="gender">Gender *</label>
+                    <select id="gender" name="gender" required>
+                        <option value="">Select Gender</option>
+                        <option value="Male" {% if profile and profile.gender == 'Male' %}selected{% endif %}>Male</option>
+                        <option value="Female" {% if profile and profile.gender == 'Female' %}selected{% endif %}>Female</option>
+                        <option value="Other" {% if profile and profile.gender == 'Other' %}selected{% endif %}>Other</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="blood_group">Blood Group *</label>
+                    <select id="blood_group" name="blood_group" required>
+                        <option value="">Select Blood Group</option>
+                        <option value="A+" {% if profile and profile.blood_group == 'A+' %}selected{% endif %}>A+</option>
+                        <option value="A-" {% if profile and profile.blood_group == 'A-' %}selected{% endif %}>A-</option>
+                        <option value="B+" {% if profile and profile.blood_group == 'B+' %}selected{% endif %}>B+</option>
+                        <option value="B-" {% if profile and profile.blood_group == 'B-' %}selected{% endif %}>B-</option>
+                        <option value="AB+" {% if profile and profile.blood_group == 'AB+' %}selected{% endif %}>AB+</option>
+                        <option value="AB-" {% if profile and profile.blood_group == 'AB-' %}selected{% endif %}>AB-</option>
+                        <option value="O+" {% if profile and profile.blood_group == 'O+' %}selected{% endif %}>O+</option>
+                        <option value="O-" {% if profile and profile.blood_group == 'O-' %}selected{% endif %}>O-</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Phone Number *</label>
+                    <input type="tel" id="phone" name="phone" value="{{ profile.phone if profile }}" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h2>Contact Information</h2>
+            <div class="form-group">
+                <label for="address">Address *</label>
+                <textarea id="address" name="address" rows="3" required>{{ profile.address if profile }}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="emergency_contact">Emergency Contact *</label>
+                <input type="text" id="emergency_contact" name="emergency_contact" 
+                       value="{{ profile.emergency_contact if profile }}" 
+                       placeholder="Name and phone number" required>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Save Profile</button>
+            {% if profile %}
+            <a href="{{ url_for('profile') }}" class="btn btn-secondary">Cancel</a>
+            {% endif %}
+        </div>
+    </form>
+</div>
+
+<style>
+.profile-form-container {
+    max-width: 800px;
+    margin-top: 100px;
+    padding: 20px;
+}
+
+.form-section {
+    background: white;
+    padding: 2rem;
+    margin: 2rem 0;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+}
+
+.form-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
+</style>
+{% endblock %}

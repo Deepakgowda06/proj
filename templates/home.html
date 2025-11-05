@@ -1,0 +1,1478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breast Cancer Detection - Early Detection Saves Lives</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #e91e63;
+            --primary-light: #f8bbd9;
+            --primary-dark: #ad1457;
+            --secondary: #2196f3;
+            --secondary-light: #bbdefb;
+            --accent: #ff9800;
+            --light: #f8f9fa;
+            --dark: #333;
+            --success: #4caf50;
+            --warning: #ffc107;
+            --shadow: 0 5px 15px rgba(0,0,0,0.1);
+            --shadow-hover: 0 10px 25px rgba(0,0,0,0.15);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            color: var(--dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+            background: #f9f9f9;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background: white;
+            box-shadow: var(--shadow);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .logo i {
+            font-size: 1.8rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 25px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            text-align: center;
+            font-size: 1rem;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #0d8aee;
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .btn-outline {
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            background: transparent;
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        .btn-large {
+            padding: 15px 40px;
+            font-size: 1.1rem;
+        }
+
+        .text-center {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            position: relative;
+            color: var(--primary-dark);
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 180px 0 100px;
+            text-align: center;
+            overflow: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .hero-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .hero-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            font-weight: bold;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.9;
+        }
+
+        .hero-description {
+            font-size: 1.2rem;
+            margin: 0 auto 2.5rem;
+            line-height: 1.6;
+            max-width: 700px;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .hero-scroll-indicator {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+        }
+
+        .scroll-arrow {
+            width: 30px;
+            height: 30px;
+            border-right: 3px solid white;
+            border-bottom: 3px solid white;
+            transform: rotate(45deg);
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: rotate(45deg) translateY(0);
+            }
+            40% {
+                transform: rotate(45deg) translateY(-10px);
+            }
+            60% {
+                transform: rotate(45deg) translateY(-5px);
+            }
+        }
+
+        /* Facts Section */
+        .facts-section, .symptoms-preview, .risk-preview {
+            padding: 100px 0;
+            background: var(--light);
+        }
+
+        .facts-grid, .symptoms-grid, .risk-grid, .screening-benefits {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .fact-card, .symptom-item, .risk-card, .benefit {
+            background: white;
+            padding: 2.5rem 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .fact-card::before, .symptom-item::before, .risk-card::before, .benefit::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--primary);
+        }
+
+        .fact-card:hover, .symptom-item:hover, .risk-card:hover, .benefit:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .fact-icon, .symptom-icon, .risk-icon, .benefit-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(233, 30, 99, 0.1);
+            font-size: 2.5rem;
+            color: var(--primary);
+        }
+
+        .fact-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        /* Info Section */
+        .info-section, .screening-cta {
+            padding: 100px 0;
+            background: white;
+        }
+
+        .info-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .info-text h2 {
+            margin-bottom: 1.5rem;
+            color: var(--primary-dark);
+        }
+
+        .info-text p {
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+
+        /* Breast Anatomy Diagram */
+        .breast-anatomy {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f8bbd9 0%, #f48fb1 100%);
+            box-shadow: var(--shadow);
+        }
+
+        .breast-part {
+            position: absolute;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.8rem;
+            text-align: center;
+        }
+
+        .breast-part:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.5);
+        }
+
+        .nipple {
+            width: 40px;
+            height: 40px;
+            background: #d81b60;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 5;
+        }
+
+        .areola {
+            width: 80px;
+            height: 80px;
+            background: #ec407a;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 4;
+        }
+
+        .duct {
+            width: 120px;
+            height: 60px;
+            background: #f06292;
+            top: 40%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 60px 60px 0 0;
+            z-index: 3;
+        }
+
+        .lobule {
+            width: 150px;
+            height: 150px;
+            background: #f48fb1;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+        }
+
+        .fat {
+            width: 300px;
+            height: 300px;
+            background: #f8bbd9;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+        }
+
+        .image-caption {
+            text-align: center;
+            margin-top: 1rem;
+            font-style: italic;
+            color: #666;
+        }
+
+        /* Screening CTA */
+        .screening-content {
+            text-align: center;
+        }
+
+        /* Final CTA */
+        .final-cta {
+            padding: 100px 0;
+            background: linear-gradient(135deg, var(--secondary) 0%, #0d47a1 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .final-cta h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .final-cta p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 2.5rem;
+            line-height: 1.6;
+        }
+
+        .cta-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* Auth Modal */
+        .auth-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .auth-container {
+            background: white;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .auth-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 25px;
+            text-align: center;
+            position: relative;
+        }
+
+        .auth-header h2 {
+            margin-bottom: 10px;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .auth-tabs {
+            display: flex;
+            border-bottom: 1px solid #eee;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            background: #f5f5f5;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .auth-tab.active {
+            background: white;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .auth-form {
+            padding: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(233, 30, 99, 0.2);
+            outline: none;
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .form-footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        /* Animations */
+        .animate-fade-in {
+            animation: fadeIn 1s ease-out;
+        }
+
+        .animate-fade-in-delay {
+            animation: fadeIn 1s ease-out 0.3s both;
+        }
+
+        .animate-fade-in-delay-2 {
+            animation: fadeIn 1s ease-out 0.6s both;
+        }
+
+        .animate-fade-in-delay-3 {
+            animation: fadeIn 1s ease-out 0.9s both;
+        }
+
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .animate-on-scroll.animated {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(233, 30, 99, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(233, 30, 99, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(233, 30, 99, 0);
+            }
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: absolute;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            z-index: 1000;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tooltip.show {
+            opacity: 1;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 60px 0 30px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-column h3 {
+            margin-bottom: 20px;
+            color: var(--primary-light);
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-column ul li a {
+            color: #ccc;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-column ul li a:hover {
+            color: white;
+            padding-left: 5px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            color: white;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            background: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        /* Flash Messages */
+        .flash-messages {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            z-index: 3000;
+            max-width: 400px;
+        }
+
+        .flash-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: var(--shadow);
+            border-left: 4px solid #28a745;
+            animation: slideInRight 0.3s ease;
+        }
+
+        .flash-message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left-color: #dc3545;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .info-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero-actions, .cta-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn-large {
+                width: 250px;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .facts-grid, .symptoms-grid, .risk-grid, .screening-benefits {
+                grid-template-columns: 1fr;
+            }
+
+            .flash-messages {
+                left: 20px;
+                right: 20px;
+                max-width: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for message in messages %}
+                    <div class="flash-message">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    <i class="fas fa-ribbon"></i>
+                    <span>BreastCare AI</span>
+                </div>
+                <div class="nav-links">
+                    <a href="#home">Home</a>
+                    <a href="#about">About</a>
+                    <a href="#symptoms">Symptoms</a>
+                    <a href="#screening">Screening</a>
+                    <a href="#resources">Resources</a>
+                    {% if session.user_id %}
+                        <a href="{{ url_for('user_dashboard') }}">Dashboard</a>
+                        <a href="{{ url_for('detect_cancer') }}">Detect Cancer</a>
+                        <a href="{{ url_for('profile') }}">Profile</a>
+                    {% endif %}
+                </div>
+                <div class="auth-buttons">
+                    {% if session.user_id %}
+                        <span style="color: var(--primary); margin-right: 15px;">
+                            <i class="fas fa-user"></i> Welcome, {{ session.username }}
+                        </span>
+                        <a href="{{ url_for('logout') }}" class="btn btn-outline">Logout</a>
+                    {% else %}
+                        <button class="btn btn-outline" id="login-btn">Login</button>
+                        <button class="btn btn-primary" id="signup-btn">Create Account</button>
+                    {% endif %}
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-background">
+            <div class="hero-particles" id="hero-particles"></div>
+        </div>
+        <div class="hero-content">
+            <h1 class="hero-title animate-fade-in">Early Detection Saves Lives</h1>
+            <p class="hero-subtitle animate-fade-in-delay">AI-Powered Breast Cancer Detection System</p>
+            <p class="hero-description animate-fade-in-delay-2">
+                Breast cancer is the most common cancer among women worldwide. Early detection through 
+                regular screening and advanced AI technology can significantly improve survival rates 
+                and treatment outcomes.
+            </p>
+            <div class="hero-actions animate-fade-in-delay-3">
+                {% if session.user_id %}
+                    <a href="{{ url_for('detect_cancer') }}" class="btn btn-primary btn-large pulse-animation">Detect Cancer</a>
+                    <a href="{{ url_for('user_dashboard') }}" class="btn btn-secondary btn-large">My Dashboard</a>
+                {% else %}
+                    <button class="btn btn-primary btn-large pulse-animation" id="hero-signup-btn">Start Detection</button>
+                    <a href="#about" class="btn btn-secondary btn-large">Learn More</a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="hero-scroll-indicator">
+            <div class="scroll-arrow"></div>
+        </div>
+    </section>
+
+    <!-- Quick Facts -->
+    <section class="facts-section" id="about">
+        <div class="container">
+            <h2 class="section-title">Breast Cancer Quick Facts</h2>
+            <div class="facts-grid">
+                <div class="fact-card animate-on-scroll">
+                    <div class="fact-icon">
+                        <i class="fas fa-female"></i>
+                    </div>
+                    <div class="fact-number" data-count="8">1 in 8</div>
+                    <p>Women will develop breast cancer in their lifetime</p>
+                </div>
+                <div class="fact-card animate-on-scroll">
+                    <div class="fact-icon">
+                        <i class="fas fa-heartbeat"></i>
+                    </div>
+                    <div class="fact-number" data-count="99">99%</div>
+                    <p>5-year survival rate for localized breast cancer</p>
+                </div>
+                <div class="fact-card animate-on-scroll">
+                    <div class="fact-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="fact-number" data-count="2.3">2.3M</div>
+                    <p>New cases diagnosed worldwide each year</p>
+                </div>
+                <div class="fact-card animate-on-scroll">
+                    <div class="fact-icon">
+                        <i class="fas fa-arrow-down"></i>
+                    </div>
+                    <div class="fact-number" data-count="40">40%</div>
+                    <p>Reduction in breast cancer mortality with screening</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- What is Breast Cancer -->
+    <section class="info-section">
+        <div class="container">
+            <div class="info-content">
+                <div class="info-text animate-on-scroll">
+                    <h2 class="section-title">What is Breast Cancer?</h2>
+                    <p>
+                        Breast cancer is a disease in which cells in the breast grow out of control. 
+                        There are different kinds of breast cancer. The kind of breast cancer depends 
+                        on which cells in the breast turn into cancer.
+                    </p>
+                    <p>
+                        Breast cancer can begin in different parts of the breast. Most breast cancers 
+                        begin in the ducts that carry milk to the nipple (ductal cancers). Some start 
+                        in the glands that make breast milk (lobular cancers).
+                    </p>
+                    <a href="#" class="btn btn-outline">Learn More About Breast Cancer</a>
+                </div>
+                <div class="info-image animate-on-scroll">
+                    <div class="breast-anatomy">
+                        <div class="breast-part nipple" data-tooltip="Nipple">Nipple</div>
+                        <div class="breast-part areola" data-tooltip="Areola">Areola</div>
+                        <div class="breast-part duct" data-tooltip="Milk Duct">Milk Duct</div>
+                        <div class="breast-part lobule" data-tooltip="Lobule">Lobule</div>
+                        <div class="breast-part fat" data-tooltip="Fatty Tissue">Fatty Tissue</div>
+                    </div>
+                    <p class="image-caption">Interactive Breast Anatomy Diagram - Click on parts to learn more</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Symptoms Section -->
+    <section class="symptoms-preview" id="symptoms">
+        <div class="container">
+            <h2 class="section-title">Common Symptoms</h2>
+            <div class="symptoms-grid">
+                <div class="symptom-item animate-on-scroll">
+                    <div class="symptom-icon">
+                        <i class="fas fa-circle"></i>
+                    </div>
+                    <h4>Lump in Breast</h4>
+                    <p>New lump in the breast or underarm</p>
+                </div>
+                <div class="symptom-item animate-on-scroll">
+                    <div class="symptom-icon">
+                        <i class="fas fa-square"></i>
+                    </div>
+                    <h4>Skin Changes</h4>
+                    <p>Dimpling, puckering, or redness</p>
+                </div>
+                <div class="symptom-item animate-on-scroll">
+                    <div class="symptom-icon">
+                        <i class="fas fa-dot-circle"></i>
+                    </div>
+                    <h4>Nipple Changes</h4>
+                    <p>Inversion, pain, or discharge</p>
+                </div>
+                <div class="symptom-item animate-on-scroll">
+                    <div class="symptom-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h4>Breast Pain</h4>
+                    <p>Persistent pain in any area</p>
+                </div>
+            </div>
+            <div class="text-center">
+                <a href="#" class="btn btn-outline">View All Symptoms</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Risk Factors -->
+    <section class="risk-preview">
+        <div class="container">
+            <h2 class="section-title">Major Risk Factors</h2>
+            <div class="risk-grid">
+                <div class="risk-card animate-on-scroll">
+                    <div class="risk-icon">
+                        <i class="fas fa-venus"></i>
+                    </div>
+                    <h4>Gender & Age</h4>
+                    <p>Being woman and older age are primary risk factors</p>
+                </div>
+                <div class="risk-card animate-on-scroll">
+                    <div class="risk-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h4>Family History</h4>
+                    <p>Close relatives with breast cancer increases risk</p>
+                </div>
+                <div class="risk-card animate-on-scroll">
+                    <div class="risk-icon">
+                        <i class="fas fa-dna"></i>
+                    </div>
+                    <h4>Genetics</h4>
+                    <p>BRCA1 and BRCA2 gene mutations</p>
+                </div>
+                <div class="risk-card animate-on-scroll">
+                    <div class="risk-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <h4>Reproductive History</h4>
+                    <p>Early menstruation or late menopause</p>
+                </div>
+            </div>
+            <div class="text-center">
+                <a href="#" class="btn btn-outline">Learn About Risk Factors</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Screening Importance -->
+    <section class="screening-cta" id="screening">
+        <div class="container">
+            <div class="screening-content">
+                <h2 class="section-title">Why Regular Screening Matters</h2>
+                <div class="screening-benefits">
+                    <div class="benefit animate-on-scroll">
+                        <div class="benefit-icon">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <h4>Early Detection</h4>
+                        <p>Find cancer before symptoms appear</p>
+                    </div>
+                    <div class="benefit animate-on-scroll">
+                        <div class="benefit-icon">
+                            <i class="fas fa-stethoscope"></i>
+                        </div>
+                        <h4>Better Outcomes</h4>
+                        <p>More treatment options available</p>
+                    </div>
+                    <div class="benefit animate-on-scroll">
+                        <div class="benefit-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <h4>Higher Survival</h4>
+                        <p>99% 5-year survival for early-stage cancer</p>
+                    </div>
+                    <div class="benefit animate-on-scroll">
+                        <div class="benefit-icon">
+                            <i class="fas fa-pills"></i>
+                        </div>
+                        <h4>Less Aggressive Treatment</h4>
+                        <p>May avoid chemotherapy in early stages</p>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <a href="#" class="btn btn-primary">Screening Guidelines</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="final-cta">
+        <div class="container">
+            <h2 class="animate-on-scroll">
+                {% if session.user_id %}
+                    Welcome to Your Health Dashboard
+                {% else %}
+                    Ready to Take Control of Your Breast Health?
+                {% endif %}
+            </h2>
+            <p class="animate-on-scroll">
+                {% if session.user_id %}
+                    Access our AI-powered detection tools and manage your breast health effectively.
+                {% else %}
+                    Our AI-powered detection system helps in early identification of potential breast cancer signs from medical images.
+                {% endif %}
+            </p>
+            <div class="cta-actions animate-on-scroll">
+                {% if session.user_id %}
+                    <a href="{{ url_for('detect_cancer') }}" class="btn btn-primary btn-large pulse-animation">Detect Cancer</a>
+                    <a href="{{ url_for('user_dashboard') }}" class="btn btn-secondary btn-large">My Dashboard</a>
+                {% else %}
+                    <button class="btn btn-primary btn-large pulse-animation" id="final-signup-btn">Create Free Account</button>
+                    <button class="btn btn-secondary btn-large" id="final-login-btn">Login to System</button>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="resources">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>BreastCare AI</h3>
+                    <p>Empowering women with AI-powered breast cancer detection and education.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#about">About Breast Cancer</a></li>
+                        <li><a href="#symptoms">Symptoms</a></li>
+                        <li><a href="#screening">Screening</a></li>
+                        <li><a href="#">Detection Tool</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Resources</h3>
+                    <ul>
+                        <li><a href="#">Risk Assessment</a></li>
+                        <li><a href="#">Prevention Tips</a></li>
+                        <li><a href="#">Support Groups</a></li>
+                        <li><a href="#">Medical Professionals</a></li>
+                        <li><a href="#">Research</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Contact Us</h3>
+                    <ul>
+                        <li><i class="fas fa-envelope"></i> info@breastcare.ai</li>
+                        <li><i class="fas fa-phone"></i> +1 (800) 123-4567</li>
+                        <li><i class="fas fa-map-marker-alt"></i> 123 Health St, Medical City</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 BreastCare AI. All rights reserved. | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Auth Modal -->
+    <div class="auth-modal" id="auth-modal">
+        <div class="auth-container">
+            <div class="auth-header">
+                <button class="close-modal" id="close-modal">&times;</button>
+                <h2 id="modal-title">Welcome Back</h2>
+                <p id="modal-subtitle">Sign in to your account</p>
+            </div>
+            
+            <div class="auth-tabs">
+                <div class="auth-tab active" id="login-tab">Login</div>
+                <div class="auth-tab" id="signup-tab">Create Account</div>
+            </div>
+            
+            <div class="auth-form">
+                <!-- Login Form -->
+                <form id="login-form" method="POST" action="{{ url_for('login') }}">
+                    <div class="form-group">
+                        <label for="login-email">Email Address</label>
+                        <input type="email" id="login-email" name="login-email" class="form-control" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" name="login-password" class="form-control" placeholder="Enter your password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
+                    <div class="form-footer">
+                        <a href="#" id="forgot-password">Forgot your password?</a>
+                    </div>
+                </form>
+                
+                <!-- Signup Form -->
+                <form id="signup-form" method="POST" action="{{ url_for('create_account') }}" style="display: none;">
+                    <div class="form-group">
+                        <label for="signup-name">Full Name</label>
+                        <input type="text" id="signup-name" name="signup-name" class="form-control" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-email">Email Address</label>
+                        <input type="email" id="signup-email" name="signup-email" class="form-control" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-password">Password</label>
+                        <input type="password" id="signup-password" name="signup-password" class="form-control" placeholder="Create a password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-confirm">Confirm Password</label>
+                        <input type="password" id="signup-confirm" name="signup-confirm" class="form-control" placeholder="Confirm your password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Create Account</button>
+                    <div class="form-footer">
+                        <p>By creating an account, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.</p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Animation on scroll
+        document.addEventListener('DOMContentLoaded', function() {
+            // Create particles for hero section
+            createParticles();
+            
+            // Animate numbers in facts section
+            animateNumbers();
+            
+            // Scroll animations
+            initScrollAnimations();
+            
+            // Interactive breast anatomy
+            initBreastAnatomy();
+            
+            // Tooltips for breast anatomy
+            initTooltips();
+            
+            // Auth modal functionality
+            initAuthModal();
+
+            // Auto-hide flash messages
+            initFlashMessages();
+        });
+
+        function createParticles() {
+            const container = document.getElementById('hero-particles');
+            if (!container) return;
+            
+            const particleCount = 30;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.style.position = 'absolute';
+                particle.style.width = Math.random() * 5 + 2 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.background = 'rgba(255, 255, 255, ' + (Math.random() * 0.5 + 0.2) + ')';
+                particle.style.borderRadius = '50%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animation = `float ${Math.random() * 10 + 10}s infinite ease-in-out`;
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                
+                container.appendChild(particle);
+            }
+            
+            // Add CSS for floating animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes float {
+                    0%, 100% { transform: translate(0, 0); }
+                    25% { transform: translate(${Math.random() * 50 - 25}px, ${Math.random() * 50 - 25}px); }
+                    50% { transform: translate(${Math.random() * 50 - 25}px, ${Math.random() * 50 - 25}px); }
+                    75% { transform: translate(${Math.random() * 50 - 25}px, ${Math.random() * 50 - 25}px); }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        function animateNumbers() {
+            const numberElements = document.querySelectorAll('.fact-number[data-count]');
+            
+            numberElements.forEach(element => {
+                const target = parseFloat(element.getAttribute('data-count'));
+                const suffix = element.textContent.replace(/[0-9.]/g, '');
+                const duration = 2000; // 2 seconds
+                const steps = 60;
+                const stepValue = target / steps;
+                let current = 0;
+                
+                const timer = setInterval(() => {
+                    current += stepValue;
+                    if (current >= target) {
+                        current = target;
+                        clearInterval(timer);
+                    }
+                    
+                    if (target % 1 === 0) {
+                        element.textContent = Math.floor(current) + suffix;
+                    } else {
+                        element.textContent = current.toFixed(1) + suffix;
+                    }
+                }, duration / steps);
+            });
+        }
+
+        function initScrollAnimations() {
+            const animatedElements = document.querySelectorAll('.animate-on-scroll');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animated');
+                    }
+                });
+            }, {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            });
+            
+            animatedElements.forEach(element => {
+                observer.observe(element);
+            });
+        }
+
+        function initBreastAnatomy() {
+            const breastParts = document.querySelectorAll('.breast-part');
+            
+            breastParts.forEach(part => {
+                part.addEventListener('click', function() {
+                    const tooltip = this.getAttribute('data-tooltip');
+                    if (tooltip) {
+                        // Remove any existing active class
+                        breastParts.forEach(p => p.classList.remove('active'));
+                        
+                        // Add active class to clicked part
+                        this.classList.add('active');
+                        
+                        // Show tooltip (you could implement a more sophisticated tooltip system)
+                        alert(`This is the ${tooltip}`);
+                    }
+                });
+            });
+        }
+
+        function initTooltips() {
+            // This is a simple implementation - you might want to use a library for more sophisticated tooltips
+            const tooltipElements = document.querySelectorAll('[data-tooltip]');
+            
+            tooltipElements.forEach(element => {
+                element.addEventListener('mouseenter', function(e) {
+                    const tooltipText = this.getAttribute('data-tooltip');
+                    const tooltip = document.createElement('div');
+                    tooltip.className = 'tooltip';
+                    tooltip.textContent = tooltipText;
+                    
+                    document.body.appendChild(tooltip);
+                    
+                    const rect = this.getBoundingClientRect();
+                    tooltip.style.top = (rect.top - tooltip.offsetHeight - 10) + 'px';
+                    tooltip.style.left = (rect.left + rect.width / 2 - tooltip.offsetWidth / 2) + 'px';
+                    
+                    // Show tooltip with animation
+                    setTimeout(() => {
+                        tooltip.classList.add('show');
+                    }, 10);
+                    
+                    this.tooltip = tooltip;
+                });
+                
+                element.addEventListener('mouseleave', function() {
+                    if (this.tooltip) {
+                        this.tooltip.classList.remove('show');
+                        setTimeout(() => {
+                            if (this.tooltip && this.tooltip.parentNode) {
+                                document.body.removeChild(this.tooltip);
+                            }
+                            this.tooltip = null;
+                        }, 300);
+                    }
+                });
+            });
+        }
+
+        function initAuthModal() {
+            const authModal = document.getElementById('auth-modal');
+            const loginBtn = document.getElementById('login-btn');
+            const signupBtn = document.getElementById('signup-btn');
+            const heroSignupBtn = document.getElementById('hero-signup-btn');
+            const finalSignupBtn = document.getElementById('final-signup-btn');
+            const finalLoginBtn = document.getElementById('final-login-btn');
+            const closeModal = document.getElementById('close-modal');
+            const loginTab = document.getElementById('login-tab');
+            const signupTab = document.getElementById('signup-tab');
+            const loginForm = document.getElementById('login-form');
+            const signupForm = document.getElementById('signup-form');
+            const modalTitle = document.getElementById('modal-title');
+            const modalSubtitle = document.getElementById('modal-subtitle');
+
+            // Open modal functions
+            function openLoginModal() {
+                authModal.style.display = 'flex';
+                loginTab.click();
+            }
+
+            function openSignupModal() {
+                authModal.style.display = 'flex';
+                signupTab.click();
+            }
+
+            // Event listeners for opening modal
+            if (loginBtn) loginBtn.addEventListener('click', openLoginModal);
+            if (finalLoginBtn) finalLoginBtn.addEventListener('click', openLoginModal);
+            if (signupBtn) signupBtn.addEventListener('click', openSignupModal);
+            if (heroSignupBtn) heroSignupBtn.addEventListener('click', openSignupModal);
+            if (finalSignupBtn) finalSignupBtn.addEventListener('click', openSignupModal);
+
+            // Close modal
+            if (closeModal) closeModal.addEventListener('click', () => {
+                authModal.style.display = 'none';
+            });
+
+            // Close modal when clicking outside
+            if (authModal) authModal.addEventListener('click', (e) => {
+                if (e.target === authModal) {
+                    authModal.style.display = 'none';
+                }
+            });
+
+            // Tab switching
+            if (loginTab) loginTab.addEventListener('click', () => {
+                loginTab.classList.add('active');
+                signupTab.classList.remove('active');
+                loginForm.style.display = 'block';
+                signupForm.style.display = 'none';
+                modalTitle.textContent = 'Welcome Back';
+                modalSubtitle.textContent = 'Sign in to your account';
+            });
+
+            if (signupTab) signupTab.addEventListener('click', () => {
+                signupTab.classList.add('active');
+                loginTab.classList.remove('active');
+                signupForm.style.display = 'block';
+                loginForm.style.display = 'none';
+                modalTitle.textContent = 'Create Account';
+                modalSubtitle.textContent = 'Join our community today';
+            });
+
+            // Form submission - Let forms submit naturally to Flask
+        }
+
+        function initFlashMessages() {
+            const flashMessages = document.querySelectorAll('.flash-message');
+            flashMessages.forEach(message => {
+                setTimeout(() => {
+                    message.style.opacity = '0';
+                    message.style.transform = 'translateX(100%)';
+                    setTimeout(() => {
+                        if (message.parentNode) {
+                            message.parentNode.removeChild(message);
+                        }
+                    }, 300);
+                }, 5000);
+            });
+        }
+    </script>
+</body>
+</html>

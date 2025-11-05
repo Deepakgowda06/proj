@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+
+{% block title %}Cancer Check - HealthPortal{% endblock %}
+
+{% block content %}
+<div class="container healthcare-container">
+    <div class="healthcare-header">
+        <h1>Cancer Risk Assessment</h1>
+        <p class="healthcare-subtitle">Upload your medical reports for AI-powered cancer risk analysis</p>
+    </div>
+
+    <div class="healthcare-content">
+        <div class="upload-section">
+            <h3>Upload Medical Reports</h3>
+            <div class="upload-area">
+                <div class="upload-icon">📄</div>
+                <p>Drag and drop your medical reports or click to browse</p>
+                <input type="file" id="medicalReports" accept=".pdf,.jpg,.jpeg,.png,.dicom" multiple>
+                <button class="btn-primary">Upload Files</button>
+            </div>
+            
+            <div class="supported-formats">
+                <h4>Supported Formats:</h4>
+                <ul>
+                    <li>PDF Documents</li>
+                    <li>JPEG/PNG Images</li>
+                    <li>DICOM Files (Medical Imaging)</li>
+                    <li>Lab Reports (PDF/Image)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="analysis-section">
+            <h3>Risk Assessment Parameters</h3>
+            <form class="healthcare-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="cancer_type">Type of Cancer to Check:</label>
+                        <select id="cancer_type" name="cancer_type">
+                            <option value="">Select Cancer Type</option>
+                            <option value="breast">Breast Cancer</option>
+                            <option value="lung">Lung Cancer</option>
+                            <option value="prostate">Prostate Cancer</option>
+                            <option value="colorectal">Colorectal Cancer</option>
+                            <option value="skin">Skin Cancer</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="family_history">Family History:</label>
+                        <select id="family_history" name="family_history">
+                            <option value="no">No Family History</option>
+                            <option value="first_degree">First Degree Relative</option>
+                            <option value="multiple">Multiple Relatives</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="symptoms">Current Symptoms (if any):</label>
+                    <textarea id="symptoms" name="symptoms" placeholder="Describe any symptoms you're experiencing..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="lifestyle">Lifestyle Factors:</label>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" name="smoking"> Smoking</label>
+                        <label><input type="checkbox" name="alcohol"> Regular Alcohol Consumption</label>
+                        <label><input type="checkbox" name="obesity"> Obesity</label>
+                        <label><input type="checkbox" name="sedentary"> Sedentary Lifestyle</label>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary btn-large">Start Analysis</button>
+            </form>
+        </div>
+
+        <div class="results-section">
+            <h3>Previous Analysis Results</h3>
+            <div class="results-placeholder">
+                <p>No previous analysis found. Upload your reports to get started.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.healthcare-container {
+    max-width: 1000px;
+}
+
+.healthcare-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.healthcare-subtitle {
+    color: #666;
+    font-size: 1.2rem;
+}
+
+.upload-area {
+    border: 2px dashed #007bff;
+    border-radius: 10px;
+    padding: 3rem;
+    text-align: center;
+    margin: 2rem 0;
+    background: #f8f9fa;
+    transition: all 0.3s ease;
+}
+
+.upload-area:hover {
+    background: #e9ecef;
+}
+
+.upload-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.supported-formats {
+    background: #e7f3ff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin: 2rem 0;
+}
+
+.supported-formats ul {
+    list-style: none;
+    padding: 0;
+}
+
+.supported-formats li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #b3d9ff;
+}
+
+.supported-formats li:last-child {
+    border-bottom: none;
+}
+
+.analysis-section, .results-section {
+    margin: 3rem 0;
+    padding: 2rem;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.checkbox-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.checkbox-group label {
+    display: flex;
+    align-items: center;
+    font-weight: normal;
+}
+
+.checkbox-group input[type="checkbox"] {
+    margin-right: 0.5rem;
+}
+
+.results-placeholder {
+    text-align: center;
+    padding: 3rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    color: #666;
+}
+</style>
+{% endblock %}

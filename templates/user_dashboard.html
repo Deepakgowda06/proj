@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block title %}User Dashboard - BreastCare AI{% endblock %}
+
+{% block content %}
+<div class="container dashboard-container">
+    <div class="dashboard-header">
+        <h1>Welcome, {{ username }}!</h1>
+        <p class="dashboard-subtitle">Breast Cancer Detection Dashboard</p>
+    </div>
+
+    <div class="dashboard-stats">
+        <div class="stat-card">
+            <div class="stat-icon">📊</div>
+            <div class="stat-info">
+                <h3>0</h3>
+                <p>Tests Completed</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">✅</div>
+            <div class="stat-info">
+                <h3>0</h3>
+                <p>Normal Results</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">⚠️</div>
+            <div class="stat-info">
+                <h3>0</h3>
+                <p>Follow-up Needed</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">📅</div>
+            <div class="stat-info">
+                <h3>0</h3>
+                <p>Upcoming Appointments</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-actions">
+        <h2>Quick Actions</h2>
+        <div class="action-grid">
+            <a href="{{ url_for('detect_cancer') }}" class="action-card">
+                <div class="action-icon">🔍</div>
+                <h3>Detect Cancer</h3>
+                <p>Upload medical images for AI analysis</p>
+            </a>
+            
+            <a href="{{ url_for('medical_reports') }}" class="action-card">
+                <div class="action-icon">📋</div>
+                <h3>Medical Reports</h3>
+                <p>View previous test results and reports</p>
+            </a>
+            
+            <a href="{{ url_for('appointments') }}" class="action-card">
+                <div class="action-icon">📅</div>
+                <h3>Appointments</h3>
+                <p>Schedule doctor appointments</p>
+            </a>
+            
+            <a href="{{ url_for('profile') }}" class="action-card">
+                <div class="action-icon">👤</div>
+                <h3>My Profile</h3>
+                <p>Update personal and medical information</p>
+            </a>
+        </div>
+    </div>
+
+    <div class="recent-activity">
+        <h2>Recent Activity</h2>
+        <div class="activity-placeholder">
+            <p>No recent activity. <a href="{{ url_for('detect_cancer') }}">Start your first cancer detection test</a></p>
+        </div>
+    </div>
+</div>
+
+<style>
+.dashboard-container {
+    max-width: 1200px;
+    margin-top: 100px;
+    padding: 20px;
+}
+
+.dashboard-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
+.stat-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.stat-icon {
+    font-size: 2rem;
+}
+
+.stat-info h3 {
+    font-size: 2rem;
+    color: var(--primary);
+    margin: 0;
+}
+
+.action-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
+.action-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    text-align: center;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+}
+
+.action-card:hover {
+    transform: translateY(-5px);
+    text-decoration: none;
+    color: inherit;
+}
+
+.action-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.action-card h3 {
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.recent-activity {
+    margin: 3rem 0;
+}
+
+.activity-placeholder {
+    background: #f8f9fa;
+    padding: 3rem;
+    text-align: center;
+    border-radius: 10px;
+    color: #666;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointments Management - BreastCare AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Same CSS as admin_medical.html */
+        :root {
+            --primary: #e91e63;
+            --primary-dark: #ad1457;
+            --secondary: #2196f3;
+            --success: #4caf50;
+            --warning: #ff9800;
+            --danger: #f44336;
+            --light: #f8f9fa;
+            --dark: #333;
+            --shadow: 0 5px 15px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #f5f5f5;
+            color: var(--dark);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header and navigation styles same as admin_medical */
+        header {
+            background: white;
+            box-shadow: var(--shadow);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 25px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-outline {
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            background: transparent;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.875rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 80px;
+            padding: 20px 0;
+        }
+
+        .page-header {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            margin: 2rem 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .status-scheduled {
+            background: #e8f5e8;
+            color: var(--success);
+        }
+
+        .status-completed {
+            background: #e3f2fd;
+            color: var(--secondary);
+        }
+
+        .status-cancelled {
+            background: #ffebee;
+            color: var(--danger);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .flash-messages {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            z-index: 3000;
+            max-width: 400px;
+        }
+
+        .flash-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: var(--shadow);
+            border-left: 4px solid #28a745;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for message in messages %}
+                    <div class="flash-message">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    <i class="fas fa-ribbon"></i>
+                    <span>BreastCare AI - Admin</span>
+                </div>
+                <div class="nav-links">
+                    <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+                    <a href="{{ url_for('admin_patients') }}">Patients</a>
+                    <a href="{{ url_for('admin_users') }}">Users</a>
+                    <a href="{{ url_for('admin_appointments') }}" style="color: var(--primary);">Appointments</a>
+                    <a href="{{ url_for('admin_records') }}">Medical Records</a>
+                    <a href="{{ url_for('home') }}">Public Site</a>
+                </div>
+                <div class="auth-buttons">
+                    <span style="color: var(--primary); margin-right: 15px;">
+                        <i class="fas fa-user-shield"></i> Admin: {{ username }}
+                    </span>
+                    <a href="{{ url_for('logout') }}" class="btn btn-outline">Logout</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container main-content">
+        <div class="page-header">
+            <h1>Appointments Management</h1>
+            <p>View and manage all patient appointments</p>
+        </div>
+
+        <!-- Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">{{ appointments|length }}</div>
+                <div class="stat-label">Total Appointments</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" style="color: var(--success);">
+                    {{ appointments|selectattr('status', 'equalto', 'scheduled')|list|length }}
+                </div>
+                <div class="stat-label">Scheduled</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" style="color: var(--secondary);">
+                    {{ appointments|selectattr('status', 'equalto', 'completed')|list|length }}
+                </div>
+                <div class="stat-label">Completed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" style="color: var(--danger);">
+                    {{ appointments|selectattr('status', 'equalto', 'cancelled')|list|length }}
+                </div>
+                <div class="stat-label">Cancelled</div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Patient Details</th>
+                        <th>Doctor & Specialty</th>
+                        <th>Date & Time</th>
+                        <th>Reason</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for appointment in appointments %}
+                    <tr>
+                        <td>{{ appointment['id'] }}</td>
+                        <td>
+                            <strong>{{ appointment['full_name'] or appointment['username'] }}</strong><br>
+                            <small style="color: #666;">
+                                {{ appointment['email'] }}<br>
+                                {{ appointment['phone'] or 'No phone' }}
+                            </small>
+                        </td>
+                        <td>
+                            <strong>{{ appointment['doctor_name'] }}</strong><br>
+                            <small style="color: #666;">
+                                {% if 'Cardiologist' in appointment['doctor_name'] %}Cardiology
+                                {% elif 'Dermatologist' in appointment['doctor_name'] %}Dermatology
+                                {% elif 'Neurologist' in appointment['doctor_name'] %}Neurology
+                                {% elif 'Oncologist' in appointment['doctor_name'] %}Oncology
+                                {% elif 'Gynecologist' in appointment['doctor_name'] %}Gynecology
+                                {% else %}General{% endif %}
+                            </small>
+                        </td>
+                        <td>
+                            <strong>{{ appointment['appointment_date'] }}</strong><br>
+                            <small style="color: #666;">{{ appointment['appointment_time'] }}</small>
+                        </td>
+                        <td>{{ appointment['reason'] or 'Not specified' }}</td>
+                        <td>
+                            <span class="status-badge status-{{ appointment['status'] }}">
+                                {{ appointment['status']|title }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn btn-primary btn-sm" onclick="updateStatus({{ appointment['id'] }}, 'scheduled')">
+                                    <i class="fas fa-clock"></i>
+                                </button>
+                                <button class="btn btn-success btn-sm" onclick="updateStatus({{ appointment['id'] }}, 'completed')">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                <button class="btn btn-danger btn-sm" onclick="updateStatus({{ appointment['id'] }}, 'cancelled')">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                                <a href="{{ url_for('admin_patient_detail', user_id=appointment['user_id']) }}" class="btn btn-secondary btn-sm">
+                                    <i class="fas fa-user"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 2rem;">
+                            No appointments found.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function updateStatus(appointmentId, status) {
+            if (!confirm('Are you sure you want to update this appointment status to "' + status + '"?')) {
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('appointment_id', appointmentId);
+            formData.append('status', status);
+            
+            fetch('{{ url_for("update_appointment_status_route") }}', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Appointment status updated successfully!');
+                    location.reload();
+                } else {
+                    alert('Error updating appointment: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error updating appointment status');
+            });
+        }
+
+        // Auto-hide flash messages
+        document.addEventListener('DOMContentLoaded', function() {
+            const flashMessages = document.querySelectorAll('.flash-message');
+            flashMessages.forEach(message => {
+                setTimeout(() => {
+                    message.style.opacity = '0';
+                    message.style.transform = 'translateX(100%)';
+                    setTimeout(() => {
+                        if (message.parentNode) {
+                            message.parentNode.removeChild(message);
+                        }
+                    }, 300);
+                }, 5000);
+            });
+        });
+    </script>
+</body>
+</html>

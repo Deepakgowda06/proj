@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% block title %}About Breast Cancer - BreastCancerDetect{% endblock %}
+
+{% block content %}
+<div class="container cancer-info-page">
+    <div class="page-header">
+        <h1>About Breast Cancer</h1>
+        <p class="page-subtitle">Understanding breast cancer, its types, and how it develops</p>
+    </div>
+
+    <div class="content-section">
+        <h2>What is Breast Cancer?</h2>
+        <p>
+            Breast cancer is a disease in which cells in the breast grow out of control. There are different kinds of breast cancer. 
+            The kind of breast cancer depends on which cells in the breast turn into cancer.
+        </p>
+        
+        <div class="info-cards">
+            <div class="info-card">
+                <h3>📍 Where Breast Cancer Starts</h3>
+                <p>Most breast cancers begin in the ducts that carry milk to the nipple (ductal cancers). Some start in the glands that make breast milk (lobular cancers).</p>
+            </div>
+            
+            <div class="info-card">
+                <h3>🔄 How It Spreads</h3>
+                <p>Breast cancer can spread when cancer cells get into the blood or lymph system and are carried to other parts of the body.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-section">
+        <h2>Types of Breast Cancer</h2>
+        
+        <div class="cancer-type">
+            <h3>Ductal Carcinoma In Situ (DCIS)</h3>
+            <p>Non-invasive cancer where abnormal cells are found in the lining of a breast duct but haven't spread outside the duct.</p>
+        </div>
+
+        <div class="cancer-type">
+            <h3>Invasive Ductal Carcinoma (IDC)</h3>
+            <p>The most common type of breast cancer that starts in the milk ducts and invades nearby breast tissues.</p>
+        </div>
+
+        <div class="cancer-type">
+            <h3>Invasive Lobular Carcinoma (ILC)</h3>
+            <p>Starts in the breast's lobules and can spread to other parts of the body.</p>
+        </div>
+
+        <div class="cancer-type">
+            <h3>Triple Negative Breast Cancer</h3>
+            <p>An aggressive type that lacks estrogen, progesterone receptors and doesn't overexpress HER2 protein.</p>
+        </div>
+    </div>
+
+    <div class="content-section">
+        <h2>Breast Anatomy</h2>
+        <div class="anatomy-grid">
+            <div class="anatomy-item">
+                <h4>🔵 Lobules</h4>
+                <p>Glands that produce milk</p>
+            </div>
+            <div class="anatomy-item">
+                <h4>📏 Ducts</h4>
+                <p>Tubes that carry milk to nipple</p>
+            </div>
+            <div class="anatomy-item">
+                <h4>💧 Nipple</h4>
+                <p>Opening of the ducts</p>
+            </div>
+            <div class="anatomy-item">
+                <h4>🛡️ Areola</h4>
+                <p>Pigmented area around nipple</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="navigation-links">
+        <h3>Learn More About Breast Cancer</h3>
+        <div class="nav-buttons">
+            <a href="{{ url_for('symptoms') }}" class="btn btn-outline">Symptoms</a>
+            <a href="{{ url_for('risk_factors') }}" class="btn btn-outline">Risk Factors</a>
+            <a href="{{ url_for('prevention') }}" class="btn btn-outline">Prevention</a>
+            <a href="{{ url_for('screening') }}" class="btn btn-outline">Screening</a>
+        </div>
+    </div>
+</div>
+
+<style>
+.cancer-info-page {
+    max-width: 1000px;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 4rem;
+    padding: 2rem 0;
+}
+
+.page-header h1 {
+    color: #ff6b6b;
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.content-section {
+    margin: 3rem 0;
+    padding: 2rem;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.info-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin: 2rem 0;
+}
+
+.info-card {
+    background: #ffeaea;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border-left: 4px solid #ff6b6b;
+}
+
+.cancer-type {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    margin: 1rem 0;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+}
+
+.anatomy-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.anatomy-item {
+    text-align: center;
+    padding: 1.5rem;
+    background: #e7f3ff;
+    border-radius: 8px;
+}
+
+.navigation-links {
+    text-align: center;
+    margin: 4rem 0;
+    padding: 2rem;
+    background: #f8f9fa;
+    border-radius: 10px;
+}
+
+.nav-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .info-cards {
+        grid-template-columns: 1fr;
+    }
+    
+    .nav-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .nav-buttons .btn {
+        width: 200px;
+    }
+}
+</style>
+{% endblock %}

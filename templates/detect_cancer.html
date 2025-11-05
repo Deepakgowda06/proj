@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}Detect Cancer - BreastCare AI{% endblock %}
+
+{% block content %}
+<div class="container medical-container">
+    <div class="medical-header">
+        <h1>Cancer Detection</h1>
+        <p class="medical-subtitle">Upload medical reports for AI-powered cancer detection analysis</p>
+    </div>
+
+    <div class="detection-interface">
+        <div class="upload-section">
+            <h3>Upload Medical Images</h3>
+            <div class="upload-area">
+                <div class="upload-icon">📁</div>
+                <p>Drag and drop your medical images or click to browse</p>
+                <input type="file" id="medicalImages" accept=".jpg,.jpeg,.png,.dicom" multiple>
+                <button class="btn btn-primary">Upload Images</button>
+            </div>
+            
+            <div class="supported-formats">
+                <h4>Supported Formats:</h4>
+                <ul>
+                    <li>CT Scan Images</li>
+                    <li>MRI Images</li>
+                    <li>X-Ray Images</li>
+                    <li>Mammogram Images</li>
+                    <li>DICOM Files</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="analysis-section">
+            <h3>Analysis Parameters</h3>
+            <form class="medical-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="cancer_type">Suspected Cancer Type:</label>
+                        <select id="cancer_type" name="cancer_type">
+                            <option value="">Select Cancer Type</option>
+                            <option value="lung">Lung Cancer</option>
+                            <option value="breast">Breast Cancer</option>
+                            <option value="prostate">Prostate Cancer</option>
+                            <option value="colorectal">Colorectal Cancer</option>
+                            <option value="skin">Skin Cancer</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Symptoms (if any):</label>
+                    <textarea placeholder="Describe any symptoms you're experiencing..."></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-large">Start Analysis</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+.medical-container {
+    max-width: 1000px;
+    margin-top: 100px;
+    padding: 20px;
+}
+
+.medical-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.upload-area {
+    border: 2px dashed #007bff;
+    border-radius: 10px;
+    padding: 3rem;
+    text-align: center;
+    margin: 2rem 0;
+    background: #f8f9fa;
+}
+
+.upload-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.analysis-section {
+    margin-top: 3rem;
+    padding: 2rem;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+</style>
+{% endblock %}

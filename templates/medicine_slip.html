@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block title %}Medicine Slip - HealthPortal{% endblock %}
+
+{% block content %}
+<div class="container healthcare-container">
+    <div class="healthcare-header">
+        <h1>Medicine Management</h1>
+        <p class="healthcare-subtitle">Manage your prescriptions and medication schedule</p>
+    </div>
+
+    <div class="healthcare-content">
+        <div class="medicine-actions">
+            <button class="btn-primary">Add New Medicine</button>
+            <button class="btn-secondary">Upload Prescription</button>
+        </div>
+
+        <div class="current-medicines">
+            <h3>Current Medications</h3>
+            <div class="medicine-card">
+                <div class="medicine-info">
+                    <h4>Atorvastatin 20mg</h4>
+                    <p>💊 Cholesterol Medication</p>
+                    <p>⏰ Once daily at night</p>
+                    <p>📅 Started: Nov 1, 2024 | Duration: Ongoing</p>
+                </div>
+                <div class="medicine-status">
+                    <span class="status-active">Active</span>
+                </div>
+            </div>
+
+            <div class="medicine-card">
+                <div class="medicine-info">
+                    <h4>Metformin 500mg</h4>
+                    <p>💊 Diabetes Medication</p>
+                    <p>⏰ Twice daily with meals</p>
+                    <p>📅 Started: Oct 15, 2024 | Duration: 3 months</p>
+                </div>
+                <div class="medicine-status">
+                    <span class="status-active">Active</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="medicine-schedule">
+            <h3>Today's Schedule</h3>
+            <div class="schedule-card">
+                <div class="schedule-time">🕘 8:00 AM</div>
+                <div class="schedule-medicine">
+                    <strong>Metformin 500mg</strong>
+                    <p>Take with breakfast</p>
+                </div>
+                <div class="schedule-status">
+                    <button class="btn-primary btn-small">Taken</button>
+                </div>
+            </div>
+
+            <div class="schedule-card">
+                <div class="schedule-time">🕐 1:00 PM</div>
+                <div class="schedule-medicine">
+                    <strong>Metformin 500mg</strong>
+                    <p>Take with lunch</p>
+                </div>
+                <div class="schedule-status">
+                    <button class="btn-secondary btn-small">Mark</button>
+                </div>
+            </div>
+
+            <div class="schedule-card">
+                <div class="schedule-time">🕘 9:00 PM</div>
+                <div class="schedule-medicine">
+                    <strong>Atorvastatin 20mg</strong>
+                    <p>Take at bedtime</p>
+                </div>
+                <div class="schedule-status">
+                    <button class="btn-secondary btn-small">Mark</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.healthcare-container {
+    max-width: 1000px;
+}
+
+.healthcare-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.medicine-actions {
+    display: flex;
+    gap: 1rem;
+    margin: 2rem 0;
+    justify-content: center;
+}
+
+.medicine-card, .schedule-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin: 1rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.medicine-card {
+    border-left: 4px solid #28a745;
+}
+
+.schedule-card {
+    border-left: 4px solid #007bff;
+}
+
+.medicine-info h4, .schedule-medicine strong {
+    color: #007bff;
+    margin-bottom: 0.5rem;
+}
+
+.status-active {
+    background: #d4edda;
+    color: #155724;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+}
+
+.schedule-time {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.btn-small {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
+
+.current-medicines, .medicine-schedule {
+    margin: 3rem 0;
+}
+</style>
+{% endblock %}

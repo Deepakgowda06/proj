@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - BreastCare AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #e91e63;
+            --primary-dark: #ad1457;
+            --secondary: #2196f3;
+            --success: #4caf50;
+            --warning: #ff9800;
+            --danger: #f44336;
+            --light: #f8f9fa;
+            --dark: #333;
+            --shadow: 0 5px 15px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #f5f5f5;
+            color: var(--dark);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: white;
+            box-shadow: var(--shadow);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 25px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-outline {
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            background: transparent;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 80px;
+            padding: 20px 0;
+        }
+
+        .dashboard-header {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-users { color: var(--primary); }
+        .stat-appointments { color: var(--secondary); }
+        .stat-records { color: var(--success); }
+        .stat-pending { color: var(--warning); }
+
+        .admin-sections {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .admin-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .admin-card h3 {
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .admin-card p {
+            margin-bottom: 1.5rem;
+            color: #666;
+        }
+
+        .recent-activity {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            margin-top: 2rem;
+        }
+
+        .activity-list {
+            margin-top: 1rem;
+        }
+
+        .activity-item {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .status-scheduled { background: #e3f2fd; color: var(--secondary); }
+        .status-completed { background: #e8f5e8; color: var(--success); }
+        .status-cancelled { background: #ffebee; color: var(--danger); }
+
+        /* Tables */
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            margin: 2rem 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-sm {
+            padding: 0.25rem 0.75rem;
+            font-size: 0.8rem;
+        }
+
+        .btn-success { background: var(--success); color: white; }
+        .btn-warning { background: var(--warning); color: white; }
+        .btn-danger { background: var(--danger); color: white; }
+
+        /* Flash Messages */
+        .flash-messages {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            z-index: 3000;
+            max-width: 400px;
+        }
+
+        .flash-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: var(--shadow);
+            border-left: 4px solid #28a745;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .admin-sections {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for message in messages %}
+                    <div class="flash-message">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    <i class="fas fa-ribbon"></i>
+                    <span>BreastCare AI - Admin</span>
+                </div>
+                <div class="nav-links">
+                    <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+                     <a href="{{ url_for('admin_patients') }}">Patients</a>
+                    <a href="{{ url_for('admin_users') }}">Users</a>
+                    <a href="{{ url_for('admin_appointments') }}">Appointments</a>
+                    <a href="{{ url_for('admin_records') }}">Medical Records</a>
+                    
+                </div>
+                <div class="auth-buttons">
+                    <span style="color: var(--primary); margin-right: 15px;">
+                        <i class="fas fa-user-shield"></i> Admin: {{ username }}
+                    </span>
+                    <a href="{{ url_for('logout') }}" class="btn btn-outline">Logout</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container main-content">
+        <div class="dashboard-header">
+            <h1>Admin Dashboard</h1>
+            <p>Manage users, appointments, and medical records</p>
+        </div>
+
+        <!-- Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number stat-users">{{ users|length }}</div>
+                <p>Total Users</p>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number stat-appointments">{{ appointments|length }}</div>
+                <p>Total Appointments</p>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number stat-records">{{ records|length }}</div>
+                <p>Medical Records</p>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number stat-pending">
+                    {{ appointments|selectattr("status", "equalto", "scheduled")|list|length }}
+                </div>
+                <p>Pending Appointments</p>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="admin-sections">
+            <div class="admin-card">
+                <h3><i class="fas fa-users"></i> User Management</h3>
+                <p>View and manage all registered users</p>
+                <a href="{{ url_for('admin_users') }}" class="btn btn-primary">Manage Users</a>
+            </div>
+            <div class="admin-card">
+                <h3><i class="fas fa-calendar-alt"></i> Appointments</h3>
+                <p>Manage patient appointments and schedules</p>
+                <a href="{{ url_for('admin_appointments') }}" class="btn btn-primary">View Appointments</a>
+            </div>
+            <div class="admin-card">
+                <h3><i class="fas fa-file-medical"></i> Medical Records</h3>
+                <p>Access and manage patient medical records</p>
+                <a href="{{ url_for('admin_records') }}" class="btn btn-primary">View Records</a>
+            </div>
+        </div>
+
+        <!-- Recent Appointments -->
+        <div class="recent-activity">
+            <h2>Recent Appointments</h2>
+            <div class="activity-list">
+                {% for appointment in appointments[:5] %}
+                <div class="activity-item">
+                    <div>
+                        <strong>{{ appointment.full_name or appointment.username }}</strong>
+                        <br>
+                        <small>{{ appointment.doctor_name }} - {{ appointment.appointment_date }} at {{ appointment.appointment_time }}</small>
+                    </div>
+                    <span class="status-badge status-{{ appointment.status }}">
+                        {{ appointment.status|title }}
+                    </span>
+                </div>
+                {% else %}
+                <p>No appointments found.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Recent Users -->
+        <div class="recent-activity">
+            <h2>Recent Users</h2>
+            <div class="activity-list">
+                {% for user in users[:5] %}
+                <div class="activity-item">
+                    <div>
+                        <strong>{{ user.full_name or user.username }}</strong>
+                        <br>
+                        <small>{{ user.email }} - {{ user.role|title }}</small>
+                    </div>
+                    <span class="status-badge {% if user.role == 'admin' %}status-completed{% else %}status-scheduled{% endif %}">
+                        {{ user.role|title }}
+                    </span>
+                </div>
+                {% else %}
+                <p>No users found.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Auto-hide flash messages
+        document.addEventListener('DOMContentLoaded', function() {
+            const flashMessages = document.querySelectorAll('.flash-message');
+            flashMessages.forEach(message => {
+                setTimeout(() => {
+                    message.style.opacity = '0';
+                    message.style.transform = 'translateX(100%)';
+                    setTimeout(() => {
+                        if (message.parentNode) {
+                            message.parentNode.removeChild(message);
+                        }
+                    }, 300);
+                }, 5000);
+            });
+        });
+    </script>
+</body>
+</html>
