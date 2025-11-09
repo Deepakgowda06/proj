@@ -1,8 +1,9 @@
-Flask==3.0.2
-torch==2.5.0
-torchvision==0.21.0
+Flask==2.3.3
+--index-url https://download.pytorch.org/whl/cpu
+torch==2.5.1+cpu
+torchvision==0.20.1+cpu
 opencv-python-headless==4.10.0.84
 Pillow==10.4.0
-Werkzeug==3.0.3
-numpy==2.0.2
-gunicorn==23.0.0
+Werkzeug==2.3.7
+numpy==1.26.4
+gunicorn==21.2.0
