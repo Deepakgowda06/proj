@@ -781,141 +781,24 @@
             }
         }
 
-        /* Mobile Menu */
-        .mobile-menu-btn {
-            display: none;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: var(--primary);
-            cursor: pointer;
-        }
-
-        .mobile-menu {
-            position: fixed;
-            top: 0;
-            right: -100%;
-            width: 80%;
-            max-width: 300px;
-            height: 100vh;
-            background: white;
-            z-index: 2000;
-            transition: var(--transition);
-            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
-            padding: 80px 30px 30px;
-            overflow-y: auto;
-        }
-
-        .mobile-menu.active {
-            right: 0;
-        }
-
-        .mobile-menu .nav-links {
-            flex-direction: column;
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .mobile-menu .auth-buttons {
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .mobile-menu-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1999;
-        }
-
-        .mobile-menu-overlay.active {
-            display: block;
-        }
-
         /* Responsive Design */
-        @media (max-width: 1024px) {
-            .hero-title {
-                font-size: 3rem;
-            }
-            
-            .section-title {
-                font-size: 2.2rem;
-            }
-            
-            .info-content {
-                gap: 3rem;
-            }
-        }
-
         @media (max-width: 768px) {
             .navbar {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .nav-links {
                 flex-wrap: wrap;
+                justify-content: center;
             }
-            
-            .nav-links, .auth-buttons {
-                display: none;
-            }
-            
-            .mobile-menu-btn {
-                display: block;
-            }
-            
-            .hero {
-                padding: 150px 0 80px;
-            }
-            
+
             .hero-title {
                 font-size: 2.5rem;
             }
             
-            .hero-subtitle {
-                font-size: 1.3rem;
-            }
-            
-            .hero-description {
-                font-size: 1.1rem;
-            }
-            
             .info-content {
                 grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-            
-            .breast-anatomy {
-                height: 300px;
-            }
-            
-            .breast-part {
-                font-size: 0.7rem;
-            }
-            
-            .nipple {
-                width: 30px;
-                height: 30px;
-            }
-            
-            .areola {
-                width: 60px;
-                height: 60px;
-            }
-            
-            .duct {
-                width: 90px;
-                height: 45px;
-            }
-            
-            .lobule {
-                width: 120px;
-                height: 120px;
-            }
-            
-            .fat {
-                width: 240px;
-                height: 240px;
             }
             
             .hero-actions, .cta-actions {
@@ -934,106 +817,11 @@
             .facts-grid, .symptoms-grid, .risk-grid, .screening-benefits {
                 grid-template-columns: 1fr;
             }
-            
-            .facts-section, .symptoms-preview, .risk-preview, .info-section, .screening-cta, .final-cta {
-                padding: 80px 0;
-            }
-            
-            .fact-card, .symptom-item, .risk-card, .benefit {
-                padding: 2rem 1.5rem;
-            }
-            
+
             .flash-messages {
                 left: 20px;
                 right: 20px;
                 max-width: none;
-            }
-            
-            .footer-content {
-                grid-template-columns: 1fr;
-                gap: 30px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: 0 15px;
-            }
-            
-            .hero {
-                padding: 130px 0 60px;
-                min-height: 90vh;
-            }
-            
-            .hero-title {
-                font-size: 2rem;
-            }
-            
-            .hero-subtitle {
-                font-size: 1.1rem;
-            }
-            
-            .hero-description {
-                font-size: 1rem;
-            }
-            
-            .section-title {
-                font-size: 1.8rem;
-            }
-            
-            .facts-section, .symptoms-preview, .risk-preview, .info-section, .screening-cta, .final-cta {
-                padding: 60px 0;
-            }
-            
-            .fact-icon, .symptom-icon, .risk-icon, .benefit-icon {
-                width: 70px;
-                height: 70px;
-                font-size: 2rem;
-            }
-            
-            .fact-number {
-                font-size: 2rem;
-            }
-            
-            .breast-anatomy {
-                height: 250px;
-            }
-            
-            .nipple {
-                width: 25px;
-                height: 25px;
-            }
-            
-            .areola {
-                width: 50px;
-                height: 50px;
-            }
-            
-            .duct {
-                width: 70px;
-                height: 35px;
-            }
-            
-            .lobule {
-                width: 100px;
-                height: 100px;
-            }
-            
-            .fat {
-                width: 200px;
-                height: 200px;
-            }
-            
-            .final-cta h2 {
-                font-size: 2rem;
-            }
-            
-            .final-cta p {
-                font-size: 1.1rem;
-            }
-            
-            .auth-container {
-                width: 95%;
             }
         }
     </style>
@@ -1058,8 +846,6 @@
                     <i class="fas fa-ribbon"></i>
                     <span>BreastCare AI</span>
                 </div>
-                
-                <!-- Desktop Navigation -->
                 <div class="nav-links">
                     <a href="#home">Home</a>
                     <a href="#about">About</a>
@@ -1072,7 +858,6 @@
                         <a href="{{ url_for('profile') }}">Profile</a>
                     {% endif %}
                 </div>
-                
                 <div class="auth-buttons">
                     {% if session.user_id %}
                         <span style="color: var(--primary); margin-right: 15px;">
@@ -1084,42 +869,9 @@
                         <button class="btn btn-primary" id="signup-btn">Create Account</button>
                     {% endif %}
                 </div>
-                
-                <!-- Mobile Menu Button -->
-                <button class="mobile-menu-btn" id="mobile-menu-btn">
-                    <i class="fas fa-bars"></i>
-                </button>
             </nav>
         </div>
     </header>
-
-    <!-- Mobile Menu -->
-    <div class="mobile-menu-overlay" id="mobile-menu-overlay"></div>
-    <div class="mobile-menu" id="mobile-menu">
-        <div class="nav-links">
-            <a href="#home">Home</a>
-            <a href="#about">About</a>
-            <a href="#symptoms">Symptoms</a>
-            <a href="#screening">Screening</a>
-            <a href="#resources">Resources</a>
-            {% if session.user_id %}
-                <a href="{{ url_for('user_dashboard') }}">Dashboard</a>
-                <a href="{{ url_for('detect_cancer') }}">Detect Cancer</a>
-                <a href="{{ url_for('profile') }}">Profile</a>
-            {% endif %}
-        </div>
-        <div class="auth-buttons">
-            {% if session.user_id %}
-                <span style="color: var(--primary); margin-bottom: 15px; display: block;">
-                    <i class="fas fa-user"></i> Welcome, {{ session.username }}
-                </span>
-                <a href="{{ url_for('logout') }}" class="btn btn-outline">Logout</a>
-            {% else %}
-                <button class="btn btn-outline" id="mobile-login-btn">Login</button>
-                <button class="btn btn-primary" id="mobile-signup-btn">Create Account</button>
-            {% endif %}
-        </div>
-    </div>
 
     <!-- Hero Section -->
     <section class="hero" id="home">
@@ -1497,9 +1249,6 @@
             // Auth modal functionality
             initAuthModal();
 
-            // Mobile menu functionality
-            initMobileMenu();
-
             // Auto-hide flash messages
             initFlashMessages();
         });
@@ -1650,8 +1399,6 @@
             const heroSignupBtn = document.getElementById('hero-signup-btn');
             const finalSignupBtn = document.getElementById('final-signup-btn');
             const finalLoginBtn = document.getElementById('final-login-btn');
-            const mobileLoginBtn = document.getElementById('mobile-login-btn');
-            const mobileSignupBtn = document.getElementById('mobile-signup-btn');
             const closeModal = document.getElementById('close-modal');
             const loginTab = document.getElementById('login-tab');
             const signupTab = document.getElementById('signup-tab');
@@ -1664,23 +1411,19 @@
             function openLoginModal() {
                 authModal.style.display = 'flex';
                 loginTab.click();
-                closeMobileMenu();
             }
 
             function openSignupModal() {
                 authModal.style.display = 'flex';
                 signupTab.click();
-                closeMobileMenu();
             }
 
             // Event listeners for opening modal
             if (loginBtn) loginBtn.addEventListener('click', openLoginModal);
             if (finalLoginBtn) finalLoginBtn.addEventListener('click', openLoginModal);
-            if (mobileLoginBtn) mobileLoginBtn.addEventListener('click', openLoginModal);
             if (signupBtn) signupBtn.addEventListener('click', openSignupModal);
             if (heroSignupBtn) heroSignupBtn.addEventListener('click', openSignupModal);
             if (finalSignupBtn) finalSignupBtn.addEventListener('click', openSignupModal);
-            if (mobileSignupBtn) mobileSignupBtn.addEventListener('click', openSignupModal);
 
             // Close modal
             if (closeModal) closeModal.addEventListener('click', () => {
@@ -1714,38 +1457,6 @@
             });
 
             // Form submission - Let forms submit naturally to Flask
-        }
-
-        function initMobileMenu() {
-            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-            const mobileMenu = document.getElementById('mobile-menu');
-            const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
-            
-            function openMobileMenu() {
-                mobileMenu.classList.add('active');
-                mobileMenuOverlay.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            }
-            
-            function closeMobileMenu() {
-                mobileMenu.classList.remove('active');
-                mobileMenuOverlay.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-            
-            if (mobileMenuBtn) {
-                mobileMenuBtn.addEventListener('click', openMobileMenu);
-            }
-            
-            if (mobileMenuOverlay) {
-                mobileMenuOverlay.addEventListener('click', closeMobileMenu);
-            }
-            
-            // Close menu when clicking on a link
-            const mobileLinks = mobileMenu.querySelectorAll('a');
-            mobileLinks.forEach(link => {
-                link.addEventListener('click', closeMobileMenu);
-            });
         }
 
         function initFlashMessages() {

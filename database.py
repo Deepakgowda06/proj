@@ -3,8 +3,6 @@ import hashlib
 from datetime import datetime
 
 # Database initialization
-
-
 def init_db():
     conn = sqlite3.connect('users.db')
     cursor = conn.cursor()
@@ -67,6 +65,23 @@ def init_db():
         )
     ''')
 
+    # Medicine records table
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS medicine_records (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            medicine_name TEXT NOT NULL,
+            dosage TEXT,
+            frequency TEXT,
+            duration TEXT,
+            prescribed_by TEXT,
+            notes TEXT,
+            file_path TEXT,
+            uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+        )
+    ''')
+
     # Create default admin user
     try:
         admin_password = hash_password('admin123')
@@ -83,7 +98,7 @@ def init_db():
 def get_db_connection():
     """Create a database connection with row factory"""
     conn = sqlite3.connect('users.db')
-    conn.row_factory = sqlite3.Row  # This enables dictionary-like access
+    conn.row_factory = sqlite3.Row
     return conn
 
 # Hash password for security
@@ -215,6 +230,88 @@ def has_complete_profile(user_id):
     profile = get_user_profile(user_id)
     return profile is not None and all(profile.values())
 
+# ==================== MEDICINE RECORDS FUNCTIONS ====================
+
+def add_medicine_record(user_id, medicine_data, file_path=None):
+    """Add a medicine record for a user"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute('''
+            INSERT INTO medicine_records 
+            (user_id, medicine_name, dosage, frequency, duration, prescribed_by, notes, file_path)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (
+            user_id,
+            medicine_data['medicine_name'],
+            medicine_data['dosage'],
+            medicine_data['frequency'],
+            medicine_data['duration'],
+            medicine_data['prescribed_by'],
+            medicine_data['notes'],
+            file_path
+        ))
+        conn.commit()
+        record_id = cursor.lastrowid
+        conn.close()
+        return record_id
+    except Exception as e:
+        print(f"Error adding medicine record: {e}")
+        conn.close()
+        return None
+
+def get_user_medicine_records(user_id):
+    """Get all medicine records for a specific user"""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT * FROM medicine_records 
+        WHERE user_id = ? 
+        ORDER BY uploaded_at DESC
+    ''', (user_id,))
+    records = cursor.fetchall()
+    conn.close()
+    return [dict(record) for record in records]
+
+def get_all_medicine_records():
+    """Get all medicine records for admin view"""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT m.*, u.username, p.full_name 
+        FROM medicine_records m
+        JOIN users u ON m.user_id = u.id
+        LEFT JOIN user_profiles p ON u.id = p.user_id
+        ORDER BY m.uploaded_at DESC
+    ''')
+    records = cursor.fetchall()
+    conn.close()
+    return [dict(record) for record in records]
+
+def get_medicine_record_by_id(record_id):
+    """Get a specific medicine record by ID"""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT m.*, u.username, p.full_name 
+        FROM medicine_records m
+        JOIN users u ON m.user_id = u.id
+        LEFT JOIN user_profiles p ON u.id = p.user_id
+        WHERE m.id = ?
+    ''', (record_id,))
+    record = cursor.fetchone()
+    conn.close()
+    return dict(record) if record else None
+
+def delete_medicine_record(record_id):
+    """Delete a medicine record"""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('DELETE FROM medicine_records WHERE id = ?', (record_id,))
+    conn.commit()
+    conn.close()
+    return True
+
 # ==================== ADMIN FUNCTIONS ====================
 
 def get_all_users():
@@ -235,7 +332,7 @@ def get_all_appointments():
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('''
-        SELECT a.*, u.username, p.full_name 
+        SELECT a.*, u.username, u.email, p.full_name, p.phone 
         FROM appointments a
         JOIN users u ON a.user_id = u.id
         LEFT JOIN user_profiles p ON u.id = p.user_id
@@ -286,6 +383,79 @@ def delete_user(user_id):
     conn.close()
     return True
 
+
+# Add this to database.py after the existing functions
+
+def get_doctors_from_database():
+    """Get list of available doctors from the database"""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    # First, let's create a doctors table if it doesn't exist
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS doctors (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            specialty TEXT NOT NULL,
+            email TEXT UNIQUE,
+            phone TEXT,
+            is_active BOOLEAN DEFAULT 1,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+    
+    # Insert some default doctors if the table is empty
+    cursor.execute('SELECT COUNT(*) as count FROM doctors')
+    count = cursor.fetchone()['count']
+    
+    if count == 0:
+        default_doctors = [
+            ('Dr. Sarah Johnson', 'Oncologist', 'sarah.johnson@hospital.com', '+1-555-0101'),
+            ('Dr. Michael Chen', 'Radiologist', 'michael.chen@hospital.com', '+1-555-0102'),
+            ('Dr. Emily Davis', 'Surgeon', 'emily.davis@hospital.com', '+1-555-0103'),
+            ('Dr. Robert Wilson', 'Oncologist', 'robert.wilson@hospital.com', '+1-555-0104'),
+            ('Dr. Maria Garcia', 'Gynecologist', 'maria.garcia@hospital.com', '+1-555-0105')
+        ]
+        
+        cursor.executemany('''
+            INSERT INTO doctors (name, specialty, email, phone) 
+            VALUES (?, ?, ?, ?)
+        ''', default_doctors)
+        conn.commit()
+    
+    # Fetch all active doctors
+    cursor.execute('''
+        SELECT id, name, specialty, email, phone 
+        FROM doctors 
+        WHERE is_active = 1 
+        ORDER BY name
+    ''')
+    doctors = cursor.fetchall()
+    conn.close()
+    
+    return [dict(doctor) for doctor in doctors]
+
+def get_available_doctors():
+    """Get list of available doctors - updated to use database"""
+    return get_doctors_from_database()
+
+def add_doctor(name, specialty, email, phone):
+    """Add a new doctor to the database"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute('''
+            INSERT INTO doctors (name, specialty, email, phone)
+            VALUES (?, ?, ?, ?)
+        ''', (name, specialty, email, phone))
+        conn.commit()
+        doctor_id = cursor.lastrowid
+        conn.close()
+        return doctor_id
+    except Exception as e:
+        print(f"Error adding doctor: {e}")
+        conn.close()
+        return None
 # ==================== PATIENT MANAGEMENT FUNCTIONS ====================
 
 def get_all_patients():
@@ -367,6 +537,7 @@ def add_patient_appointment(user_id, doctor_name, appointment_date, appointment_
         print(f"Error scheduling appointment: {e}")
         conn.close()
         return False
+
 def book_appointment(user_id, doctor_name, appointment_date, appointment_time, reason):
     """Book a new appointment"""
     try:
@@ -394,19 +565,6 @@ def get_user_appointments(user_id):
         WHERE user_id = ? 
         ORDER BY appointment_date DESC, appointment_time DESC
     ''', (user_id,))
-    appointments = cursor.fetchall()
-    conn.close()
-    return [dict(appt) for appt in appointments]
-def get_all_appointments():
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute('''
-        SELECT a.*, u.username, u.email, p.full_name, p.phone 
-        FROM appointments a
-        JOIN users u ON a.user_id = u.id
-        LEFT JOIN user_profiles p ON u.id = p.user_id
-        ORDER BY a.appointment_date DESC, a.appointment_time DESC
-    ''')
     appointments = cursor.fetchall()
     conn.close()
     return [dict(appt) for appt in appointments]

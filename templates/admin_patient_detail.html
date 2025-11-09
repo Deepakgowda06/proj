@@ -134,7 +134,7 @@
 
         .patient-header {
             display: flex;
-            justify-content: between;
+            justify-content: space-between;
             align-items: center;
             margin-bottom: 2rem;
         }
@@ -170,7 +170,7 @@
         .info-card h3 {
             color: var(--primary);
             margin-bottom: 1.5rem;
-            border-bottom: 2px solid var(--primary-light);
+            border-bottom: 2px solid #f0f0f0;
             padding-bottom: 0.5rem;
         }
 
@@ -190,7 +190,7 @@
             color: #666;
         }
 
-        .medical-records, .appointments {
+        .medical-records, .appointments, .medicine-records {
             background: white;
             padding: 2rem;
             border-radius: 10px;
@@ -206,7 +206,7 @@
         }
 
         .record-type {
-            background: var(--primary-light);
+            background: #fce4ec;
             color: var(--primary-dark);
             padding: 0.25rem 0.75rem;
             border-radius: 15px;
@@ -243,6 +243,40 @@
             border-left: 4px solid #28a745;
         }
 
+        /* Table Styles */
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .medicine-name {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
         @media (max-width: 768px) {
             .navbar {
                 flex-direction: column;
@@ -262,6 +296,10 @@
             .patient-avatar-large {
                 margin-right: 0;
                 margin-bottom: 1rem;
+            }
+            
+            .table-container {
+                overflow-x: auto;
             }
         }
     </style>
@@ -290,9 +328,10 @@
                     <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
                     <a href="{{ url_for('admin_patients') }}">Patients</a>
                     <a href="{{ url_for('admin_appointments') }}">Appointments</a>
-                    <a href="{{ url_for('admin_records') }}">Medical Records</a>
+                
+                    <a href="{{ url_for('admin_medicine') }}">Medicine Records</a>
                     <a href="{{ url_for('admin_users') }}">Users</a>
-                    <a href="{{ url_for('home') }}">Public Site</a>
+                  
                 </div>
                 <div class="auth-buttons">
                     <span style="color: var(--primary); margin-right: 15px;">
@@ -308,7 +347,7 @@
     <div class="container main-content">
         <div class="page-header">
             <div class="patient-header">
-                <div style="display: flex; align-items: center;">
+                <div style="display: flex; align-items: center; flex: 1;">
                     <div class="patient-avatar-large">
                         {{ patient.full_name[0] if patient.full_name else 'U' }}
                     </div>
@@ -378,21 +417,71 @@
             </div>
         </div>
 
+        <!-- Medicine Records Section -->
+        <div class="medicine-records">
+            <h3><i class="fas fa-pills"></i> Medicine Records</h3>
+            {% if medicine_records %}
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Medicine Name</th>
+                            <th>Dosage</th>
+                            <th>Frequency</th>
+                            <th>Duration</th>
+                            <th>Prescribed By</th>
+                            <th>Notes</th>
+                            <th>Uploaded</th>
+                            <th>File</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in medicine_records %}
+                        <tr>
+                            <td class="medicine-name">{{ record.medicine_name }}</td>
+                            <td>{{ record.dosage or 'N/A' }}</td>
+                            <td>{{ record.frequency or 'N/A' }}</td>
+                            <td>{{ record.duration or 'N/A' }}</td>
+                            <td>{{ record.prescribed_by or 'N/A' }}</td>
+                            <td>{{ record.notes or 'No notes' }}</td>
+                            <td>{{ record.uploaded_at }}</td>
+                            <td>
+                                {% if record.file_path %}
+                                <a href="{{ url_for('download_medicine_file', record_id=record.id) }}" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-download"></i> Download
+                                </a>
+                                {% else %}
+                                <span>No file</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div style="text-align: center; padding: 2rem; color: #666;">
+                <i class="fas fa-pills" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                <p>No medicine records found for this patient.</p>
+            </div>
+            {% endif %}
+        </div>
+
         <!-- Medical History -->
         <div class="medical-records">
             <h3><i class="fas fa-file-medical"></i> Medical History</h3>
             {% if medical_history %}
                 {% for record in medical_history %}
                 <div class="record-item">
-                    <div style="display: flex; justify-content: between; align-items: start; margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
                         <div>
-                            <span class="record-type">{{ record[2] }}</span>
-                            <h4 style="margin: 0.5rem 0;">{{ record[3] or 'No description' }}</h4>
+                            <span class="record-type">{{ record.record_type }}</span>
+                            <h4 style="margin: 0.5rem 0;">{{ record.description or 'No description' }}</h4>
                         </div>
-                        <small>{{ record[5] }}</small>
+                        <small>{{ record.uploaded_at }}</small>
                     </div>
-                    {% if record[4] %}
-                    <a href="{{ record[4] }}" class="btn btn-primary btn-sm">
+                    {% if record.file_path %}
+                    <a href="{{ record.file_path }}" class="btn btn-primary btn-sm">
                         <i class="fas fa-download"></i> Download File
                     </a>
                     {% endif %}
@@ -411,18 +500,18 @@
             {% if appointments %}
                 {% for appointment in appointments %}
                 <div class="appointment-item">
-                    <div style="display: flex; justify-content: between; align-items: center;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
                         <div>
-                            <h4 style="margin: 0 0 0.5rem 0;">Dr. {{ appointment[2] }}</h4>
+                            <h4 style="margin: 0 0 0.5rem 0;">Dr. {{ appointment.doctor_name }}</h4>
                             <p style="margin: 0; color: #666;">
-                                {{ appointment[3] }} at {{ appointment[4] }}
+                                {{ appointment.appointment_date }} at {{ appointment.appointment_time }}
                             </p>
-                            {% if appointment[5] %}
-                            <p style="margin: 0.5rem 0 0 0;"><strong>Reason:</strong> {{ appointment[5] }}</p>
+                            {% if appointment.reason %}
+                            <p style="margin: 0.5rem 0 0 0;"><strong>Reason:</strong> {{ appointment.reason }}</p>
                             {% endif %}
                         </div>
-                        <span class="status-badge status-{{ appointment[6] }}">
-                            {{ appointment[6]|title }}
+                        <span class="status-badge status-{{ appointment.status }}">
+                            {{ appointment.status|title }}
                         </span>
                     </div>
                 </div>

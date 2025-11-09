@@ -151,6 +151,7 @@
         .stat-appointments { color: var(--secondary); }
         .stat-records { color: var(--success); }
         .stat-pending { color: var(--warning); }
+        .stat-medicine { color: #9c27b0; }
 
         .admin-sections {
             display: grid;
@@ -274,6 +275,16 @@
             border-left: 4px solid #28a745;
         }
 
+        .medicine-name {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .patient-info {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
         @media (max-width: 768px) {
             .navbar {
                 flex-direction: column;
@@ -317,11 +328,11 @@
                 </div>
                 <div class="nav-links">
                     <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
-                     <a href="{{ url_for('admin_patients') }}">Patients</a>
+                    <a href="{{ url_for('admin_patients') }}">Patients</a>
                     <a href="{{ url_for('admin_users') }}">Users</a>
                     <a href="{{ url_for('admin_appointments') }}">Appointments</a>
-                    <a href="{{ url_for('admin_records') }}">Medical Records</a>
-                    
+                  
+                    <a href="{{ url_for('admin_medicine') }}">Medicine Records</a>
                 </div>
                 <div class="auth-buttons">
                     <span style="color: var(--primary); margin-right: 15px;">
@@ -360,6 +371,12 @@
                 </div>
                 <p>Pending Appointments</p>
             </div>
+            <div class="stat-card">
+                <div class="stat-number stat-medicine">
+                    {{ medicine_records|length if medicine_records else 0 }}
+                </div>
+                <p>Medicine Records</p>
+            </div>
         </div>
 
         <!-- Quick Actions -->
@@ -378,6 +395,49 @@
                 <h3><i class="fas fa-file-medical"></i> Medical Records</h3>
                 <p>Access and manage patient medical records</p>
                 <a href="{{ url_for('admin_records') }}" class="btn btn-primary">View Records</a>
+            </div>
+            <div class="admin-card">
+                <h3><i class="fas fa-pills"></i> Medicine Records</h3>
+                <p>View patient medicine prescriptions and records</p>
+                <a href="{{ url_for('admin_medicine') }}" class="btn btn-primary">View Medicines</a>
+            </div>
+        </div>
+
+        <!-- Recent Medicine Records -->
+        <div class="recent-activity">
+            <h2><i class="fas fa-pills"></i> Recent Medicine Records</h2>
+            <div class="activity-list">
+                {% if medicine_records %}
+                    {% for record in medicine_records[:5] %}
+                    <div class="activity-item">
+                        <div>
+                            <strong class="medicine-name">{{ record.medicine_name }}</strong>
+                            <br>
+                            <small class="patient-info">
+                                {{ record.full_name or record.username }} - 
+                                {{ record.dosage or 'No dosage' }} - 
+                                {{ record.prescribed_by or 'No doctor' }}
+                            </small>
+                        </div>
+                        <span class="status-badge status-scheduled">
+                            {{ record.uploaded_at[:10] }}
+                        </span>
+                    </div>
+                    {% endfor %}
+                    {% if medicine_records|length > 5 %}
+                    <div class="activity-item" style="justify-content: center;">
+                        <a href="{{ url_for('admin_medicine') }}" class="btn btn-outline">View All Medicine Records</a>
+                    </div>
+                    {% endif %}
+                {% else %}
+                    <div class="activity-item">
+                        <div>
+                            <strong>No medicine records found</strong>
+                            <br>
+                            <small>Patients haven't uploaded any medicine records yet</small>
+                        </div>
+                    </div>
+                {% endif %}
             </div>
         </div>
 

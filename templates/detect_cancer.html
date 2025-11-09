@@ -5,55 +5,180 @@
 {% block content %}
 <div class="container medical-container">
     <div class="medical-header">
-        <h1>Cancer Detection</h1>
-        <p class="medical-subtitle">Upload medical reports for AI-powered cancer detection analysis</p>
+        <h1>AI-Powered Breast Cancer Detection</h1>
+        <p class="medical-subtitle">Upload medical images for AI-powered breast cancer analysis using EfficientNet-B3</p>
+        
+        {% if not model_loaded %}
+        <div class="alert alert-warning">
+            <strong>⚠️ AI Model Not Available</strong><br>
+            The cancer detection AI model is currently unavailable. Please contact administrator.
+        </div>
+        {% endif %}
     </div>
 
     <div class="detection-interface">
+        <!-- Upload Section -->
         <div class="upload-section">
-            <h3>Upload Medical Images</h3>
-            <div class="upload-area">
-                <div class="upload-icon">📁</div>
-                <p>Drag and drop your medical images or click to browse</p>
-                <input type="file" id="medicalImages" accept=".jpg,.jpeg,.png,.dicom" multiple>
-                <button class="btn btn-primary">Upload Images</button>
-            </div>
-            
-            <div class="supported-formats">
-                <h4>Supported Formats:</h4>
-                <ul>
-                    <li>CT Scan Images</li>
-                    <li>MRI Images</li>
-                    <li>X-Ray Images</li>
-                    <li>Mammogram Images</li>
-                    <li>DICOM Files</li>
-                </ul>
+            <h3>Upload Medical Image</h3>
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon">🩺</div>
+                <p>Drag and drop your medical image or click to browse</p>
+                <form method="POST" enctype="multipart/form-data" id="detectionForm">
+                    <input type="file" id="medical_image" name="medical_image" accept=".jpg,.jpeg,.png" required>
+                    <button type="submit" class="btn btn-primary" {% if not model_loaded %}disabled{% endif %}>
+                        🔍 Analyze Image
+                    </button>
+                </form>
+                <div class="supported-formats">
+                    <h4>Supported Formats:</h4>
+                    <ul>
+                        <li>JPG Images</li>
+                        <li>JPEG Images</li>
+                        <li>PNG Images</li>
+                        <li>Mammogram Images</li>
+                        <li>Ultrasound Images</li>
+                    </ul>
+                </div>
             </div>
         </div>
 
-        <div class="analysis-section">
-            <h3>Analysis Parameters</h3>
-            <form class="medical-form">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="cancer_type">Suspected Cancer Type:</label>
-                        <select id="cancer_type" name="cancer_type">
-                            <option value="">Select Cancer Type</option>
-                            <option value="lung">Lung Cancer</option>
-                            <option value="breast">Breast Cancer</option>
-                            <option value="prostate">Prostate Cancer</option>
-                            <option value="colorectal">Colorectal Cancer</option>
-                            <option value="skin">Skin Cancer</option>
-                        </select>
+        <!-- Results Section -->
+        {% if prediction %}
+        <div class="results-section">
+            <h3>Analysis Results</h3>
+            <div class="result-card">
+                <div class="result-header">
+                    <h4>Diagnosis: 
+                        <span class="diagnosis-{{ prediction }}">
+                            {{ prediction|upper }}
+                        </span>
+                    </h4>
+                    <div class="confidence">
+                        Confidence: <strong>{{ "%.2f"|format(confidence) }}%</strong>
                     </div>
                 </div>
-
-                <div class="form-group">
-                    <label>Symptoms (if any):</label>
-                    <textarea placeholder="Describe any symptoms you're experiencing..."></textarea>
+                
+                <div class="image-comparison">
+                    <div class="image-container">
+                        <h5>Original Image</h5>
+                        <img src="{{ uploaded_img }}" alt="Uploaded Medical Image" class="result-image">
+                    </div>
+                    <div class="image-container">
+                        <h5>AI Heatmap Analysis</h5>
+                        <img src="{{ overlay_img }}" alt="AI Heatmap" class="result-image">
+                        <p class="heatmap-caption">Red areas indicate regions of interest detected by AI</p>
+                    </div>
+                </div>
+                
+                <div class="result-explanation">
+                    <h5>What this means:</h5>
+                    {% if prediction == 'benign' %}
+                    <div class="alert alert-info">
+                        <strong>Benign Detection</strong><br>
+                        The AI has detected non-cancerous tissue. While this is generally good news, 
+                        please consult with a healthcare professional for proper diagnosis and monitoring.
+                    </div>
+                    {% elif prediction == 'malignant' %}
+                    <div class="alert alert-warning">
+                        <strong>Potential Malignant Detection</strong><br>
+                        The AI has detected features that may indicate cancerous tissue. 
+                        <strong>This requires immediate medical attention.</strong> Please consult with 
+                        an oncologist for proper diagnosis and treatment planning.
+                    </div>
+                    {% else %}
+                    <div class="alert alert-success">
+                        <strong>Normal Tissue</strong><br>
+                        The AI has not detected any abnormal features. However, regular screening 
+                        and consultation with healthcare professionals is still recommended.
+                    </div>
+                    {% endif %}
                 </div>
 
-                <button type="submit" class="btn btn-primary btn-large">Start Analysis</button>
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="btn btn-secondary" onclick="analyzeAnother()">
+                        🔄 Analyze Another Image
+                    </button>
+                    
+                    {% if prediction == 'malignant' or (prediction == 'benign' and confidence > 70) %}
+                    <button class="btn btn-primary" onclick="showAppointmentModal()">
+                        📅 Book Doctor Appointment
+                    </button>
+                    {% endif %}
+                    
+                    <button class="btn btn-outline" onclick="downloadReport()">
+                        📄 Download Report
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Information Section -->
+        <div class="info-section">
+            <h3>Important Information</h3>
+            <div class="info-cards">
+                <div class="info-card">
+                    <h5>⚠️ Disclaimer</h5>
+                    <p>This AI tool is for assistance only and should not replace professional medical diagnosis. Always consult with qualified healthcare providers.</p>
+                </div>
+                <div class="info-card">
+                    <h5>🔬 How it Works</h5>
+                    <p>Our AI uses EfficientNet-B3 deep learning model trained on thousands of medical images to detect patterns associated with breast cancer.</p>
+                </div>
+                <div class="info-card">
+                    <h5>📊 Accuracy</h5>
+                    <p>The model achieves high accuracy but results should be verified through clinical tests and professional medical consultation.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Appointment Modal -->
+<div id="appointmentModal" class="modal {% if show_appointment_modal %}show{% endif %}">
+    <div class="modal-overlay" onclick="hideAppointmentModal()"></div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>📅 Book Doctor Appointment</h3>
+            <span class="close" onclick="hideAppointmentModal()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="alert alert-warning">
+                <strong>Important:</strong> Based on your analysis results, we recommend consulting with a specialist immediately.
+            </div>
+            
+            <form id="quickAppointmentForm">
+                <div class="form-group">
+                    <label for="modal_doctor_name">Select Doctor:</label>
+                    <select id="modal_doctor_name" name="doctor_name" required>
+                        <option value="">Choose a specialist</option>
+                        {% for doctor in doctors %}
+                        <option value="{{ doctor.name }}">{{ doctor.name }} - {{ doctor.specialty }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="modal_appointment_date">Appointment Date:</label>
+                        <input type="date" id="modal_appointment_date" name="appointment_date" min="{{ current_date }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="modal_appointment_time">Appointment Time:</label>
+                        <input type="time" id="modal_appointment_time" name="appointment_time" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="modal_reason">Reason for Visit:</label>
+                    <textarea id="modal_reason" name="reason" rows="3" placeholder="Follow-up from AI cancer detection analysis" required>Follow-up from AI cancer detection analysis</textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="hideAppointmentModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Book Appointment</button>
+                </div>
             </form>
         </div>
     </div>
@@ -61,8 +186,8 @@
 
 <style>
 .medical-container {
-    max-width: 1000px;
-    margin-top: 100px;
+    max-width: 1200px;
+    margin-top: 80px;
     padding: 20px;
 }
 
@@ -71,13 +196,24 @@
     margin-bottom: 3rem;
 }
 
+.medical-subtitle {
+    color: #666;
+    font-size: 1.2rem;
+}
+
 .upload-area {
     border: 2px dashed #007bff;
-    border-radius: 10px;
-    padding: 3rem;
+    border-radius: 15px;
+    padding: 3rem 2rem;
     text-align: center;
     margin: 2rem 0;
     background: #f8f9fa;
+    transition: all 0.3s ease;
+}
+
+.upload-area:hover {
+    border-color: #0056b3;
+    background: #e9ecef;
 }
 
 .upload-icon {
@@ -85,12 +221,503 @@
     margin-bottom: 1rem;
 }
 
-.analysis-section {
+.supported-formats {
+    margin-top: 2rem;
+    text-align: left;
+    display: inline-block;
+}
+
+.supported-formats ul {
+    list-style: none;
+    padding: 0;
+}
+
+.supported-formats li {
+    padding: 5px 0;
+    color: #555;
+}
+
+.results-section {
     margin-top: 3rem;
-    padding: 2rem;
+}
+
+.result-card {
     background: white;
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    border-left: 5px solid #007bff;
+}
+
+.result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #eee;
+}
+
+.diagnosis-benign { color: #17a2b8; }
+.diagnosis-malignant { color: #dc3545; }
+.diagnosis-normal { color: #28a745; }
+
+.image-comparison {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin: 2rem 0;
+}
+
+.image-container {
+    text-align: center;
+}
+
+.result-image {
+    width: 100%;
+    max-width: 400px;
     border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+}
+
+.heatmap-caption {
+    font-size: 0.9rem;
+    color: #666;
+    margin-top: 0.5rem;
+}
+
+.result-explanation {
+    margin-top: 2rem;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: #007bff;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #0056b3;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #545b62;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 2px solid #007bff;
+    color: #007bff;
+}
+
+.btn-outline:hover {
+    background: #007bff;
+    color: white;
+}
+
+.info-section {
+    margin-top: 3rem;
+}
+
+.info-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.info-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    border-top: 4px solid #007bff;
+}
+
+.info-card h5 {
+    color: #007bff;
+    margin-bottom: 1rem;
+}
+
+.alert {
+    padding: 1rem;
+    border-radius: 8px;
+    margin: 1rem 0;
+}
+
+.alert-info { background: #d1ecf1; border-left: 4px solid #17a2b8; }
+.alert-warning { background: #fff3cd; border-left: 4px solid #ffc107; }
+.alert-success { background: #d4edda; border-left: 4px solid #28a745; }
+
+/* Fixed Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+}
+
+.modal.show {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 10001;
+}
+
+.modal-content {
+    background-color: white;
+    margin: auto;
+    padding: 0;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    animation: modalSlideIn 0.3s ease;
+    position: relative;
+    z-index: 10002;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+@keyframes modalSlideIn {
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    border-bottom: 2px solid #eee;
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 1;
+    border-radius: 15px 15px 0 0;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: #007bff;
+}
+
+.close {
+    font-size: 2rem;
+    cursor: pointer;
+    color: #aaa;
+    background: none;
+    border: none;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.close:hover {
+    color: #000;
+}
+
+.modal-body {
+    padding: 2rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+    box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 2rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .image-comparison {
+        grid-template-columns: 1fr;
+    }
+    
+    .result-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .medical-container {
+        margin-top: 60px;
+        padding: 10px;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .modal-content {
+        width: 95%;
+        margin: 10px;
+    }
+}
+
+/* Drag and drop styles */
+.upload-area.dragover {
+    background: #e3f2fd;
+    border-color: #2196f3;
 }
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('medical_image');
+    
+    // Initialize modal if needed
+    {% if show_appointment_modal %}
+    showAppointmentModal();
+    {% endif %}
+    
+    // Set current date for appointment form
+    const today = new Date().toISOString().split('T')[0];
+    const dateInput = document.getElementById('modal_appointment_date');
+    if (dateInput) {
+        dateInput.min = today;
+        if (!dateInput.value) {
+            dateInput.value = today;
+        }
+    }
+    
+    // Set current time for appointment form (next available hour)
+    const timeInput = document.getElementById('modal_appointment_time');
+    if (timeInput && !timeInput.value) {
+        const now = new Date();
+        const nextHour = new Date(now.getTime() + 60 * 60 * 1000);
+        const hours = nextHour.getHours().toString().padStart(2, '0');
+        const minutes = nextHour.getMinutes().toString().padStart(2, '0');
+        timeInput.value = `${hours}:${minutes}`;
+    }
+    
+    // Drag and drop functionality
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, preventDefaults, false);
+    });
+    
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    
+    ['dragenter', 'dragover'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, highlight, false);
+    });
+    
+    ['dragleave', 'drop'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, unhighlight, false);
+    });
+    
+    function highlight() {
+        uploadArea.classList.add('dragover');
+    }
+    
+    function unhighlight() {
+        uploadArea.classList.remove('dragover');
+    }
+    
+    uploadArea.addEventListener('drop', handleDrop, false);
+    
+    function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        fileInput.files = files;
+        
+        // Update UI to show file name
+        if (files.length > 0) {
+            const fileName = files[0].name;
+            uploadArea.querySelector('p').textContent = `Selected: ${fileName}`;
+        }
+    }
+    
+    // File input change handler
+    fileInput.addEventListener('change', function() {
+        if (this.files.length > 0) {
+            uploadArea.querySelector('p').textContent = `Selected: ${this.files[0].name}`;
+        }
+    });
+    
+    // Quick appointment form submission
+    const quickAppointmentForm = document.getElementById('quickAppointmentForm');
+    if (quickAppointmentForm) {
+        quickAppointmentForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            bookQuickAppointment();
+        });
+    }
+    
+    // Prevent modal content click from closing modal
+    const modalContent = document.querySelector('.modal-content');
+    if (modalContent) {
+        modalContent.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    }
+});
+
+function showAppointmentModal() {
+    const modal = document.getElementById('appointmentModal');
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden'; // Prevent background scrolling
+}
+
+function hideAppointmentModal() {
+    const modal = document.getElementById('appointmentModal');
+    modal.classList.remove('show');
+    document.body.style.overflow = ''; // Restore scrolling
+}
+
+function analyzeAnother() {
+    // Reset the form and clear results
+    document.getElementById('detectionForm').reset();
+    document.querySelector('.upload-area p').textContent = 'Drag and drop your medical image or click to browse';
+    
+    // Scroll to upload section
+    document.querySelector('.upload-section').scrollIntoView({ behavior: 'smooth' });
+}
+
+function downloadReport() {
+    alert('Report download feature coming soon!');
+    // Implementation for downloading PDF report
+}
+
+function bookQuickAppointment() {
+    const form = document.getElementById('quickAppointmentForm');
+    const formData = new FormData(form);
+    const submitBtn = form.querySelector('button[type="submit"]');
+    
+    // Show loading state
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = 'Booking...';
+    submitBtn.disabled = true;
+    
+    fetch('/quick-book-appointment', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Appointment booked successfully!');
+            if (data.redirect_url) {
+                window.location.href = data.redirect_url;
+            } else {
+                hideAppointmentModal();
+                // Refresh the page to show the new appointment
+                window.location.reload();
+            }
+        } else {
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error booking appointment. Please try again.');
+    })
+    .finally(() => {
+        // Restore button state
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+    });
+}
+
+// Close modal when clicking outside or pressing Escape
+document.addEventListener('click', function(event) {
+    const modal = document.getElementById('appointmentModal');
+    if (event.target === modal || event.target.classList.contains('modal-overlay')) {
+        hideAppointmentModal();
+    }
+});
+
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        hideAppointmentModal();
+    }
+});
+</script>
 {% endblock %}

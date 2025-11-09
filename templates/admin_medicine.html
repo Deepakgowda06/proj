@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicine Records - BreastCare AI Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #e91e63;
+            --primary-dark: #ad1457;
+            --secondary: #2196f3;
+            --success: #4caf50;
+            --warning: #ff9800;
+            --danger: #f44336;
+            --light: #f8f9fa;
+            --dark: #333;
+            --shadow: 0 5px 15px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #f5f5f5;
+            color: var(--dark);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: white;
+            box-shadow: var(--shadow);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 25px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-outline {
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            background: transparent;
+        }
+
+        .btn-sm {
+            padding: 5px 15px;
+            font-size: 0.9rem;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #d32f2f;
+        }
+
+        .main-content {
+            margin-top: 80px;
+            padding: 20px 0;
+        }
+
+        .page-header {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            margin: 2rem 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .medicine-name {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .patient-info {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .flash-messages {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            z-index: 3000;
+            max-width: 400px;
+        }
+
+        .flash-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: var(--shadow);
+            border-left: 4px solid #28a745;
+        }
+
+        .no-records {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+
+        .no-records i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #ddd;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for message in messages %}
+                    <div class="flash-message">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    <i class="fas fa-ribbon"></i>
+                    <span>BreastCare AI - Admin</span>
+                </div>
+                <div class="nav-links">
+                    <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+                    <a href="{{ url_for('admin_patients') }}">Patients</a>
+                    <a href="{{ url_for('admin_users') }}">Users</a>
+                    <a href="{{ url_for('admin_appointments') }}">Appointments</a>
+              
+                    <a href="{{ url_for('admin_medicine') }}" style="color: var(--primary);">Medicine Records</a>
+                </div>
+                <div class="auth-buttons">
+                    <span style="color: var(--primary); margin-right: 15px;">
+                        <i class="fas fa-user-shield"></i> Admin: {{ username }}
+                    </span>
+                    <a href="{{ url_for('logout') }}" class="btn btn-outline">Logout</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container main-content">
+        <div class="page-header">
+            <h1>Medicine Records Management</h1>
+            <p>View all patient medicine records and prescriptions</p>
+        </div>
+
+        <!-- Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">{{ medicine_records|length }}</div>
+                <div class="stat-label">Total Medicine Records</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">
+                    {{ medicine_records|selectattr("file_path")|list|length }}
+                </div>
+                <div class="stat-label">With Prescription Files</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">
+                    {{ medicine_records|selectattr("prescribed_by")|list|length }}
+                </div>
+                <div class="stat-label">With Doctor Info</div>
+            </div>
+        </div>
+
+        <!-- Medicine Records Table -->
+        <div class="table-container">
+            {% if medicine_records %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Patient</th>
+                        <th>Medicine Details</th>
+                        <th>Prescription Info</th>
+                        <th>File</th>
+                        <th>Uploaded</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in medicine_records %}
+                    <tr>
+                        <td>{{ record.id }}</td>
+                        <td>
+                            <div class="patient-info">
+                                <strong>{{ record.full_name or record.username }}</strong><br>
+                                <small>User: {{ record.username }}</small><br>
+                                <small>ID: {{ record.user_id }}</small>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="medicine-name">{{ record.medicine_name }}</div>
+                            <div><small><strong>Dosage:</strong> {{ record.dosage or 'N/A' }}</small></div>
+                            <div><small><strong>Frequency:</strong> {{ record.frequency or 'N/A' }}</small></div>
+                            <div><small><strong>Duration:</strong> {{ record.duration or 'N/A' }}</small></div>
+                        </td>
+                        <td>
+                            <div><small><strong>Prescribed by:</strong> {{ record.prescribed_by or 'N/A' }}</small></div>
+                            <div><small><strong>Notes:</strong> {{ record.notes or 'No notes' }}</small></div>
+                        </td>
+                        <td>
+                            {% if record.file_path %}
+                            <a href="{{ url_for('download_medicine_file', record_id=record.id) }}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-download"></i> Download
+                            </a>
+                            {% else %}
+                            <span>No file</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ record.uploaded_at }}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button onclick="deleteMedicineRecord({{ record.id }})" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="no-records">
+                <i class="fas fa-pills"></i>
+                <h3>No Medicine Records Found</h3>
+                <p>No patients have uploaded medicine records yet.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        function deleteMedicineRecord(recordId) {
+            if (confirm('Are you sure you want to delete this medicine record? This action cannot be undone.')) {
+                fetch('/admin/delete-medicine-record', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'record_id=' + recordId
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        location.reload();
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error deleting medicine record');
+                });
+            }
+        }
+
+        // Auto-hide flash messages
+        document.addEventListener('DOMContentLoaded', function() {
+            const flashMessages = document.querySelectorAll('.flash-message');
+            flashMessages.forEach(message => {
+                setTimeout(() => {
+                    message.style.opacity = '0';
+                    message.style.transform = 'translateX(100%)';
+                    setTimeout(() => {
+                        if (message.parentNode) {
+                            message.parentNode.removeChild(message);
+                        }
+                    }, 300);
+                }, 5000);
+            });
+        });
+    </script>
+</body>
+</html>

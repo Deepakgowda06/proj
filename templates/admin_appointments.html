@@ -179,11 +179,13 @@
             box-shadow: var(--shadow);
             overflow: hidden;
             margin: 2rem 0;
+            overflow-x: auto;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
+            min-width: 800px;
         }
 
         th, td {
@@ -246,6 +248,23 @@
             border-left: 4px solid #28a745;
         }
 
+        /* Mobile Navigation */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--dark);
+            cursor: pointer;
+        }
+
+        /* Mobile-specific styles */
+        @media (max-width: 992px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
         @media (max-width: 768px) {
             .navbar {
                 flex-direction: column;
@@ -255,10 +274,76 @@
             .nav-links {
                 flex-wrap: wrap;
                 justify-content: center;
+                display: none;
+                width: 100%;
+            }
+            
+            .nav-links.active {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .auth-buttons {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+                position: absolute;
+                right: 20px;
+                top: 15px;
+            }
+            
+            .page-header {
+                padding: 1.5rem;
+            }
+            
+            .stat-card {
+                padding: 1rem;
+            }
+            
+            .stat-number {
+                font-size: 2rem;
             }
             
             .action-buttons {
                 flex-direction: column;
+            }
+            
+            .flash-messages {
+                position: relative;
+                top: auto;
+                right: auto;
+                max-width: 100%;
+                margin-bottom: 1rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 0 10px;
+            }
+            
+            .main-content {
+                margin-top: 120px;
+            }
+            
+            .logo span {
+                font-size: 1.2rem;
+            }
+            
+            .page-header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .page-header p {
+                font-size: 0.9rem;
             }
         }
     </style>
@@ -283,13 +368,15 @@
                     <i class="fas fa-ribbon"></i>
                     <span>BreastCare AI - Admin</span>
                 </div>
+                <button class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
                 <div class="nav-links">
                     <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
                     <a href="{{ url_for('admin_patients') }}">Patients</a>
                     <a href="{{ url_for('admin_users') }}">Users</a>
                     <a href="{{ url_for('admin_appointments') }}" style="color: var(--primary);">Appointments</a>
-                    <a href="{{ url_for('admin_records') }}">Medical Records</a>
-                    <a href="{{ url_for('home') }}">Public Site</a>
+                    <a href="{{ url_for('admin_medicine') }}">Medicine Records</a>
                 </div>
                 <div class="auth-buttons">
                     <span style="color: var(--primary); margin-right: 15px;">
@@ -451,6 +538,16 @@
                     }, 300);
                 }, 5000);
             });
+            
+            // Mobile menu toggle
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            const navLinks = document.querySelector('.nav-links');
+            
+            if (mobileMenuBtn) {
+                mobileMenuBtn.addEventListener('click', function() {
+                    navLinks.classList.toggle('active');
+                });
+            }
         });
     </script>
 </body>

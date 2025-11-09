@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Reports - BreastCare AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #e91e63;
+            --primary-dark: #ad1457;
+            --secondary: #2196f3;
+            --light: #f8f9fa;
+            --dark: #333;
+            --shadow: 0 5px 15px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #f5f5f5;
+            color: var(--dark);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: white;
+            box-shadow: var(--shadow);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 25px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-outline {
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            background: transparent;
+        }
+
+        .main-content {
+            margin-top: 80px;
+            padding: 20px 0;
+        }
+
+        .page-header {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .feature-card p {
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            margin: 2rem 0;
+        }
+
+        .info-section h2 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .flash-messages {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            z-index: 3000;
+            max-width: 400px;
+        }
+
+        .flash-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: var(--shadow);
+            border-left: 4px solid #28a745;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for message in messages %}
+                    <div class="flash-message">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    <i class="fas fa-ribbon"></i>
+                    <span>BreastCare AI</span>
+                </div>
+                <div class="nav-links">
+                    <a href="{{ url_for('user_dashboard') }}">Dashboard</a>
+                    <a href="{{ url_for('profile') }}">Profile</a>
+                    <a href="{{ url_for('detect_cancer') }}">Cancer Detection</a>
+                    <a href="{{ url_for('appointments') }}">Appointments</a>
+                    <a href="{{ url_for('medicine_upload') }}" style="color: var(--primary);">Medicine Records</a>
+                    <a href="{{ url_for('medical_reports') }}">Medical Reports</a>
+                </div>
+                <div class="auth-buttons">
+                    <span style="color: var(--primary); margin-right: 15px;">
+                        <i class="fas fa-user"></i> {{ username }}
+                    </span>
+                    <a href="{{ url_for('logout') }}" class="btn btn-outline">Logout</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container main-content">
+        <div class="page-header">
+            <h1>Medical Reports & Records</h1>
+            <p>Manage your medical documents, test results, and health records</p>
+        </div>
+
+        <!-- Features Grid -->
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-pills"></i>
+                </div>
+                <h3>Medicine Records</h3>
+                <p>Upload and manage your prescription details, dosage information, and medication schedules</p>
+                <a href="{{ url_for('medicine_upload') }}" class="btn btn-primary">Manage Medicines</a>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-file-medical"></i>
+                </div>
+                <h3>Test Results</h3>
+                <p>View and track your medical test results, lab reports, and diagnostic information</p>
+                <a href="{{ url_for('medicine_upload') }}" class="btn btn-primary">View Reports</a>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-history"></i>
+                </div>
+                <h3>Medical History</h3>
+                <p>Access your complete medical history, past treatments, and health records</p>
+                <a href="{{ url_for('medicine_upload') }}" class="btn btn-primary">View History</a>
+            </div>
+        </div>
+
+        <!-- Information Section -->
+        <div class="info-section">
+            <h2>About Medical Records</h2>
+            <p>Keeping track of your medical records is essential for effective healthcare management. Our system allows you to:</p>
+            <ul style="margin: 1rem 0; padding-left: 2rem;">
+                <li>Upload and store prescription details</li>
+                <li>Track medication schedules and dosages</li>
+                <li>Maintain a complete medical history</li>
+                <li>Access your records anytime, anywhere</li>
+                <li>Share important information with healthcare providers</li>
+            </ul>
+            <p>All your medical data is stored securely and can be accessed by authorized medical professionals when needed.</p>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="info-section">
+            <h2>Quick Actions</h2>
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1rem;">
+                <a href="{{ url_for('medicine_upload') }}" class="btn btn-primary">
+                    <i class="fas fa-upload"></i> Upload New Medicine
+                </a>
+                <a href="{{ url_for('appointments') }}" class="btn btn-outline">
+                    <i class="fas fa-calendar-plus"></i> Schedule Appointment
+                </a>
+                <a href="{{ url_for('detect_cancer') }}" class="btn btn-outline">
+                    <i class="fas fa-stethoscope"></i> Health Check
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Auto-hide flash messages
+        document.addEventListener('DOMContentLoaded', function() {
+            const flashMessages = document.querySelectorAll('.flash-message');
+            flashMessages.forEach(message => {
+                setTimeout(() => {
+                    message.style.opacity = '0';
+                    message.style.transform = 'translateX(100%)';
+                    setTimeout(() => {
+                        if (message.parentNode) {
+                            message.parentNode.removeChild(message);
+                        }
+                    }, 300);
+                }, 5000);
+            });
+        });
+    </script>
+</body>
+</html>
